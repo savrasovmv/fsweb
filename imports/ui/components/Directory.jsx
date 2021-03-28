@@ -6,7 +6,7 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import {Title} from './Title';
+import { Title } from './Title';
 import { APIClient } from '../../utils/RestApiClient'
 //import { ContactlessTwoTone } from '@material-ui/icons';
 
@@ -32,27 +32,30 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export const DirectoryList = () => {
-    const [direrctoryList, setDirectoryList] = React.useState([])
+  const [direrctoryList, setDirectoryList] = React.useState([])
   const classes = useStyles();
   const preventDefault = (event) => {
     event.preventDefault();
-    
-        const history = APIClient.v1.get('users', {})
-        console.log(history)
-        history.then((resolve) => {
-          console.log('111', resolve)
-          setDirectoryList(resolve.result)
-               
-        })
-    
-    
-    
+
+    APIClient.v1.get('users', {})
+    .then((resolve) => {
+      console.log('111', resolve)
+      setDirectoryList(resolve.result)
+
+    })
+      .catch((error) => {
+        console.log('Err = ', error)
+        setDirectoryList([])
+      })
       
+
+
+
   }
   return (
     <React.Fragment>
-        <Title>Recent Orders</Title>
-        <Table size="small">
+      <Title>Recent Orders</Title>
+      <Table size="small">
         <TableHead>
           <TableRow>
             <TableCell>domain</TableCell>
@@ -70,7 +73,7 @@ export const DirectoryList = () => {
               <TableCell>{row.id}</TableCell>
               <TableCell>{row.effective_caller_id_name}</TableCell>
               <TableCell>{row.effective_caller_id_number}</TableCell>
-              
+
             </TableRow>
           ))}
         </TableBody>
@@ -80,7 +83,7 @@ export const DirectoryList = () => {
           See more orders
         </Link>
       </div>
-      
+
     </React.Fragment>
   );
 }

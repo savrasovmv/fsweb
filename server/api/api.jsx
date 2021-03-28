@@ -30,7 +30,12 @@ const r4 = new Promise((resolve, reject) => {
       })
 
     }).catch(e => {
-      reject(e)
+      console.log("Server ERR = ", e)
+      //reject(e)
+      resolve({
+        "status": "error",
+        "result": "Error"
+      })
     })
 
 })

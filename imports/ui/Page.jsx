@@ -16,6 +16,21 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles, useTheme, Theme, createStyles } from '@material-ui/core/styles';
 
+import { compose, createStore } from 'redux'
+import {reducer} from './app/reducer'
+
+import { Comp1 } from './components/Comp1'
+import { Comp2 } from './components/Comp2'
+
+export let store = createStore(
+  reducer, 
+  'offline', 
+  compose(
+    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+  ))
+
+
+
 import {DirectoryList} from './components/Directory'
 
 const drawerWidth = 240;
@@ -76,6 +91,10 @@ export function Page(props) {
   const handleMenu = (text) => {
     console.log(text)
   };
+
+  const handleStatus = ()=>{
+    store.dispatch({type: "SET_STATUS_ONLINE"})
+  }
 
   const drawer = (
     <div>
@@ -157,6 +176,14 @@ export function Page(props) {
         <div className={classes.toolbar} />
         
         <DirectoryList/> 
+        <p> Status Comp1:</p>
+        
+        <Comp1 />
+        <p> Status Comp2:</p>
+        <Comp2 />
+
+        <p></p>
+        <button onClick={handleStatus}> Set Status</button>
             
         <Typography paragraph>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
