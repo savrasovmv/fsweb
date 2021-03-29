@@ -1,44 +1,36 @@
-import React from 'react';
-import AppBar from '@material-ui/core/AppBar';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import Divider from '@material-ui/core/Divider';
-import Drawer from '@material-ui/core/Drawer';
-import Hidden from '@material-ui/core/Hidden';
-import IconButton from '@material-ui/core/IconButton';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import MailIcon from '@material-ui/icons/Mail';
-import MenuIcon from '@material-ui/icons/Menu';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
+import React, { useState, useEffect } from 'react';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link,
+  useRouteMatch,
+  useParams
+} from "react-router-dom";
+
 import { makeStyles, useTheme, Theme, createStyles } from '@material-ui/core/styles';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import { AppBar, Toolbar , IconButton, Typography, Button} from '@material-ui/core';
+import MenuIcon from '@material-ui/icons/Menu';
 
-import { compose, createStore } from 'redux'
-import {reducer} from './app/reducer'
-
-import { Comp1 } from './components/Comp1'
-import { Comp2 } from './components/Comp2'
-
-export let store = createStore(
-  reducer, 
-  'offline', 
-  compose(
-    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
-  ))
-
-
-
-import {DirectoryList} from './components/Directory'
+import {NavBar} from './components/NavBar'
+import {SideBar} from './components/SideBar'
+import {Home } from './pages/Home'
+import {DirectoryList } from './pages/DirectoryList'
+import {Directory } from './pages/Directory'
+import {ContactsList} from './pages/ContactsList'
 
 const drawerWidth = 240;
 
-const useStyles = makeStyles(theme =>
+export const useStyles = makeStyles(theme =>
   createStyles({
     root: {
       display: 'flex',
+      '& > *': {
+        margin: theme.spacing(1),
+        width: '25ch',
+      }
+      
     },
     drawer: {
       [theme.breakpoints.up('sm')]: {
@@ -48,8 +40,9 @@ const useStyles = makeStyles(theme =>
     },
     appBar: {
       [theme.breakpoints.up('sm')]: {
-        width: `calc(100% - ${drawerWidth}px)`,
-        marginLeft: drawerWidth,
+        //width: `calc(100% - ${drawerWidth}px)`,
+        width: '100%',
+        //marginLeft: drawerWidth,
       },
     },
     menuButton: {
@@ -70,145 +63,57 @@ const useStyles = makeStyles(theme =>
   }),
 );
 
-// interface Props {
-//   /**
-//    * Injected by the documentation to work in an iframe.
-//    * You won't need it on your project.
-//    */
-//   window?: () => Window;
-//}
-
-export function Page(props) {
-  const { window } = props;
+export const Page = () => {
   const classes = useStyles();
   const theme = useTheme();
-  const [mobileOpen, setMobileOpen] = React.useState(false);
 
-  const handleDrawerToggle = () => {
-    setMobileOpen(!mobileOpen);
-  };
+  // const api_regex = /^\/api\/.*/
 
-  const handleMenu = (text) => {
-    console.log(text)
-  };
+  // if (!api_regex.test(window.location.pathname)) {
+    console.log(window.location.pathname)
 
-  const handleStatus = ()=>{
-    store.dispatch({type: "SET_STATUS_ONLINE"})
-  }
-
-  const drawer = (
-    <div>
-      <div className={classes.toolbar} />
-      <Divider />
-      <List>
-        {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-          <ListItem button key={text} onClick={()=> handleMenu(text)}>
-            <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-            <ListItemText primary={text} />
-          </ListItem>
-        ))}
-      </List>
-      <Divider />
-      <List>
-        {['All mail', 'Trash', 'Spam'].map((text, index) => (
-          <ListItem button key={text}>
-            <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-            <ListItemText primary={text} />
-          </ListItem>
-        ))}
-      </List>
-    </div>
-  );
-
-  const container = window !== undefined ? () => window().document.body : undefined;
-
-  return (
-    <div className={classes.root}>
-      <CssBaseline />
-      <AppBar position="fixed" className={classes.appBar}>
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            edge="start"
-            onClick={handleDrawerToggle}
-            className={classes.menuButton}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" noWrap>
-            Responsive drawer
-          </Typography>
-        </Toolbar>
-      </AppBar>
-      <nav className={classes.drawer} aria-label="mailbox folders">
-        {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
-        <Hidden smUp implementation="css">
-          <Drawer
-            container={container}
-            variant="temporary"
-            anchor={theme.direction === 'rtl' ? 'right' : 'left'}
-            open={mobileOpen}
-            onClose={handleDrawerToggle}
-            classes={{
-              paper: classes.drawerPaper,
-            }}
-            ModalProps={{
-              keepMounted: true, // Better open performance on mobile.
-            }}
-          >
-            {drawer}
-          </Drawer>
-        </Hidden>
-        <Hidden xsDown implementation="css">
-          <Drawer
-            classes={{
-              paper: classes.drawerPaper,
-            }}
-            variant="permanent"
-            open
-          >
-            {drawer}
-          </Drawer>
-        </Hidden>
-      </nav>
-      <main className={classes.content}>
-        <div className={classes.toolbar} />
+    return (
+      <Router>
         
-        <DirectoryList/> 
-        <p> Status Comp1:</p>
-        
-        <Comp1 />
-        <p> Status Comp2:</p>
-        <Comp2 />
+        <div className={classes.root}>
+        <CssBaseline />
 
-        <p></p>
-        <button onClick={handleStatus}> Set Status</button>
+        
+        
+        
+        
+        
+        <NavBar/>
+          
+          <SideBar/>
+        
+        
+          
+          <main className={classes.content}>
+          <div className={classes.toolbar} />
+          
+          <Switch>
             
-        <Typography paragraph>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
-          ut labore et dolore magna aliqua. Rhoncus dolor purus non enim praesent elementum
-          facilisis leo vel. Risus at ultrices mi tempus imperdiet. Semper risus in hendrerit
-          gravida rutrum quisque non tellus. Convallis convallis tellus id interdum velit laoreet id
-          donec ultrices. Odio morbi quis commodo odio aenean sed adipiscing. Amet nisl suscipit
-          adipiscing bibendum est ultricies integer quis. Cursus euismod quis viverra nibh cras.
-          Metus vulputate eu scelerisque felis imperdiet proin fermentum leo. Mauris commodo quis
-          imperdiet massa tincidunt. Cras tincidunt lobortis feugiat vivamus at augue. At augue eget
-          arcu dictum varius duis at consectetur lorem. Velit sed ullamcorper morbi tincidunt. Lorem
-          donec massa sapien faucibus et molestie ac.
-        </Typography>
-        <Typography paragraph>
-          Consequat mauris nunc congue nisi vitae suscipit. Fringilla est ullamcorper eget nulla
-          facilisi etiam dignissim diam. Pulvinar elementum integer enim neque volutpat ac
-          tincidunt. Ornare suspendisse sed nisi lacus sed viverra tellus. Purus sit amet volutpat
-          consequat mauris. Elementum eu facilisis sed odio morbi. Euismod lacinia at quis risus sed
-          vulputate odio. Morbi tincidunt ornare massa eget egestas purus viverra accumsan in. In
-          hendrerit gravida rutrum quisque non tellus orci ac. Pellentesque nec nam aliquam sem et
-          tortor. Habitant morbi tristique senectus et. Adipiscing elit duis tristique sollicitudin
-          nibh sit. Ornare aenean euismod elementum nisi quis eleifend. Commodo viverra maecenas
-          accumsan lacus vel facilisis. Nulla posuere sollicitudin aliquam ultrices sagittis orci a.
-        </Typography>
-      </main>
-    </div>
-  );
+            
+            <Route path="/contacts">
+              <ContactsList />
+            </Route>
+            <Route path="/directory::id">
+              <Directory />
+            </Route>
+            <Route path="/directory">
+              <DirectoryList />
+            </Route>
+            <Route path="/">
+              <Home />
+            </Route>
+          </Switch>
+          
+          </main>
+        </div>
+        
+      </Router>
+    );
+    // }
+
 }

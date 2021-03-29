@@ -2,23 +2,21 @@ import React, { Fragment } from 'react';
 import { useTracker } from 'meteor/react-meteor-data';
 import { AppBar, Toolbar , IconButton, Typography, Button} from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
-
+import {useStyles} from '../Page'
 export const NavBar = () => {
 
-
+    const classes = useStyles();
     return (
-        <Fragment>
-        <AppBar position="static">
+        
+        <AppBar position="fixed" className={classes.appBar}>
             <Toolbar>
-            <IconButton edge="start"  color="inherit" aria-label="menu">
-            <MenuIcon />
-            </IconButton>
-            <Typography variant="h6" >
-                News
+            
+            <Typography variant="h6" edge="end">
+                FreeSWITCH
             </Typography>
-                <Button color="inherit">Login</Button>
+                <Button edge="end" color="inherit">Login</Button>
             </Toolbar>
         </AppBar>
-        </Fragment>
+        
     )
 }

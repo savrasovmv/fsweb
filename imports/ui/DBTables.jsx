@@ -1,0 +1,19 @@
+export const directoryTables = [
+  "domain",
+  "id",
+  "number-alias",
+  "mailbox",
+  "cidr",
+  "password",
+  "toll_allow",
+  "user_context",
+  "default_gateway",
+  "effective_caller_id_name",
+  "effective_caller_id_number",
+  "outbound_caller_id_name",
+  "outbound_caller_id_number",
+  "callgroup",
+  "uservar1",
+  "uservar2",
+  "uservar3" 
+]
