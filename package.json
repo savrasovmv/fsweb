@@ -17,10 +17,12 @@
     "jquery": "^3.6.0",
     "materialize-css": "^1.0.0-rc.2",
     "meteor-node-stubs": "^1.0.1",
+    "node-fetch": "^2.6.1",
     "pg": "^8.5.1",
     "prop-types": "^15.7.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "react-hook-form": "^6.15.5",
     "react-router-dom": "^5.2.0",
     "redux": "^4.0.5"
   },
