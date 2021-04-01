@@ -10,6 +10,8 @@ import { Title } from '../components/Title';
 import { APIClient } from '../../utils/RestApiClient'
 import IconButton from '@material-ui/core/IconButton';
 import EditIcon from '@material-ui/icons/Edit';
+import AddIcon from '@material-ui/icons/Add';
+import Button from '@material-ui/core/Button';
 import { Link as ReactLink, useRouteMatch } from 'react-router-dom'
 
 
@@ -43,16 +45,30 @@ export const DirectoryList = () => {
   const classes = useStyles();
 
   useEffect(()=>{
-    APIClient.v1.get('getDirectoryList', {})
+    //APIClient.v1.get('getDirectoryList', {})
+    APIClient.v1.get('directory', {})
       .then((resolve) => {
         console.log('111', resolve)
-        setDirectoryList(resolve.result)
+        
+        //setDirectoryList(resolve.result)
+        setDirectoryList(resolve)
 
       })
       .catch((error) => {
         console.log('Err = ', error)
         setDirectoryList([])
       })
+
+      APIClient.v1.get('countDirectory', {})
+      .then((resolve) => {
+        console.log('COUNT', resolve)
+
+      })
+      .catch((error) => {
+        console.log('Err = ', error)
+      })
+    
+
 
   },[])
   let { path, url } = useRouteMatch();
@@ -62,13 +78,23 @@ export const DirectoryList = () => {
   return (
     <React.Fragment>
       <Title>Список директорий</Title>
+      <Button
+        variant="contained"
+        color="primary"
+        size="large"
+        startIcon={<AddIcon />}
+        component={ReactLink}
+        to='/directoryCreate'
+      >
+        Добавить
+      </Button>
       {direrctoryList ? (
         <Table size="small">
           <TableHead>
             <TableRow>
-              <TableCell>domain</TableCell>
-              <TableCell>name</TableCell>
               <TableCell>id</TableCell>
+              <TableCell>domain</TableCell>
+              <TableCell>userid</TableCell>
               <TableCell>effective_caller_id_name</TableCell>
               <TableCell >effective_caller_id_number</TableCell>
               <TableCell >Редак.</TableCell>
@@ -80,9 +106,9 @@ export const DirectoryList = () => {
 
             {direrctoryList.map((row) => (
               <TableRow key={row.id}>
-                <TableCell>{row.domain}</TableCell>
-                <TableCell>{row.name}</TableCell>
                 <TableCell>{row.id}</TableCell>
+                <TableCell>{row.domain}</TableCell>
+                <TableCell>{row.userid}</TableCell>
                 <TableCell>{row.effective_caller_id_name}</TableCell>
                 <TableCell>{row.effective_caller_id_number}</TableCell>
                 <TableCell>

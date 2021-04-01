@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import {
-  BrowserRouter as Router,
+ // BrowserRouter as Router,
+  Router,
   Switch,
   Route,
   Link,
   useRouteMatch,
   useParams
 } from "react-router-dom";
+import createHistory from "../utils/history";
 
 import { makeStyles, useTheme, Theme, createStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -73,7 +75,7 @@ export const Page = () => {
     console.log(window.location.pathname)
 
     return (
-      <Router>
+      <Router history={createHistory}>
         
         <div className={classes.root}>
         <CssBaseline />
@@ -100,6 +102,9 @@ export const Page = () => {
             </Route>
             <Route path="/directory::id">
               <Directory />
+            </Route>
+            <Route path="/directoryCreate">
+              <Directory isCreate={true}/>
             </Route>
             <Route path="/directory">
               <DirectoryList />

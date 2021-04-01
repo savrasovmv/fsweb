@@ -18,6 +18,9 @@ export const APIClient = {
     get(endpoint, params) {
         return APIClient._jqueryCall('GET', endpoint, params);
     },
+    head(endpoint) {
+        return APIClient._jqueryCall('HEAD', endpoint);
+    },
 
     post(endpoint, params, body) {
         if (!body) {
@@ -157,6 +160,9 @@ export const APIClient = {
 
         get(endpoint, params) {
             return APIClient.get(`v1/${endpoint}`, params);
+        },
+        head(endpoint) {
+            return APIClient.get(`v1/${endpoint}`);
         },
 
         post(endpoint, params, body) {
