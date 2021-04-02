@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import Link from '@material-ui/core/Link';
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
+import Box from '@material-ui/core/Box';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
@@ -12,25 +13,16 @@ import IconButton from '@material-ui/core/IconButton';
 import EditIcon from '@material-ui/icons/Edit';
 import AddIcon from '@material-ui/icons/Add';
 import Button from '@material-ui/core/Button';
+import Pagination from '@material-ui/lab/Pagination';
 import { Link as ReactLink, useRouteMatch } from 'react-router-dom'
 
+// const config = require('config');
 
-//import { ContactlessTwoTone } from '@material-ui/icons';
+// const maxRowList = config.get('maxRowList');
+import configData from "../../../config/default.json";
 
-// Generate Order Data
-const createData = (id, date, name, shipTo, paymentMethod, amount) => {
-  return { id, date, name, shipTo, paymentMethod, amount };
-}
-
-const rows = [
-  createData(0, '16 Mar, 2019', 'Elvis Presley', 'Tupelo, MS', 'VISA ⠀•••• 3719', 312.44),
-  createData(1, '16 Mar, 2019', 'Paul McCartney', 'London, UK', 'VISA ⠀•••• 2574', 866.99),
-  createData(2, '16 Mar, 2019', 'Tom Scholz', 'Boston, MA', 'MC ⠀•••• 1253', 100.81),
-  createData(3, '16 Mar, 2019', 'Michael Jackson', 'Gary, IN', 'AMEX ⠀•••• 2000', 654.39),
-  createData(4, '15 Mar, 2019', 'Bruce Springsteen', 'Long Branch, NJ', 'VISA ⠀•••• 5919', 212.79),
-];
-
-
+const maxRowList = configData.Pages.maxRowList
+console.log("maxRowList", maxRowList)
 
 const useStyles = makeStyles((theme) => ({
   seeMore: {
@@ -42,14 +34,18 @@ const thisPath = window.location.pathname
 
 export const DirectoryList = () => {
   const [direrctoryList, setDirectoryList] = React.useState([])
+  const [countPage, setCountPage] = React.useState(0)
+  const [page, setPage] = React.useState(1)
+  const [totalItem, setTotalItem] = React.useState(0)
   const classes = useStyles();
 
   useEffect(()=>{
     //APIClient.v1.get('getDirectoryList', {})
-    APIClient.v1.get('directory', {})
+    
+    APIClient.v1.get('directory', {page: page})
       .then((resolve) => {
         console.log('111', resolve)
-        
+        //console.log('222',resolve.headers.get('Content-Type'))
         //setDirectoryList(resolve.result)
         setDirectoryList(resolve)
 
@@ -59,9 +55,22 @@ export const DirectoryList = () => {
         setDirectoryList([])
       })
 
-      APIClient.v1.get('countDirectory', {})
+      // const res = APIClient.v1.get('directory', {})
+      // console.log("222", res.headers.get('Content-Type'))
+
+      APIClient.v1.get('countRowTable', {tableName : 'directory'})
       .then((resolve) => {
         console.log('COUNT', resolve)
+        if (resolve.length>0){ 
+          count = resolve[0].count
+            if (maxRowList>0) {
+              setCountPage(count/maxRowList)
+            }
+           console.log('COUNT', resolve[0].count)
+           setTotalItem(count)
+          }
+
+          
 
       })
       .catch((error) => {
@@ -70,25 +79,48 @@ export const DirectoryList = () => {
     
 
 
-  },[])
+  },[page])
   let { path, url } = useRouteMatch();
   console.log('path', path)
   console.log('url', url)
 
+  const handleChange = (event, value) => {
+    setPage(value);
+  };
+
   return (
     <React.Fragment>
       <Title>Список директорий</Title>
-      <Button
-        variant="contained"
-        color="primary"
-        size="large"
-        startIcon={<AddIcon />}
-        component={ReactLink}
-        to='/directoryCreate'
-      >
-        Добавить
-      </Button>
+      <Box display="flex" p={1} m={1} width="100%">
+      
+
+        <Box flexGrow={1}  >
+          <Box display="flex">
+            <Box   p={1}>
+              Всего: {totalItem}
+            </Box>
+            <Box alignItems="center">
+              <Pagination count={countPage} shape="rounded" page={page} onChange={handleChange} />
+            </Box>
+          </Box> 
+        </Box>
+        <Box  alignItems="center">
+          <Button
+            variant="contained"
+            color="primary"
+            size="small"
+            startIcon={<AddIcon />}
+            component={ReactLink}
+            to='/directoryCreate'
+          >
+            Добавить
+          </Button>
+        </Box>
+      </Box>
       {direrctoryList ? (
+        <>
+        
+        
         <Table size="small">
           <TableHead>
             <TableRow>
@@ -122,6 +154,7 @@ export const DirectoryList = () => {
 
           </TableBody>
         </Table>
+        </>
       ) : "Нет данных"}
       {/* <div className={classes.seeMore}>
         <Link color="primary" href="#" onClick={preventDefault}>
