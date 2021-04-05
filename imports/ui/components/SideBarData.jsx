@@ -10,6 +10,10 @@ export const SideBarData = [
         {
             title: "Contacts",
             path: "contacts"
+        },
+        {
+            title: "Группы",
+            path: "groups"
         }
 
 

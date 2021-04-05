@@ -1,22 +1,21 @@
 import { Meteor } from 'meteor/meteor';
 import { Restivus } from 'meteor/mrest:restivus';
-const { Client } = require('pg')
+//const { Client } = require('pg')
 import configData from "../../config/default.json";
+import SyncPromise from "./SyncPromise"
 
-const maxRowList = configData.Pages.maxRowList
+export const maxRowList = configData.Pages.maxRowList
+const pgUrl = configData.PostgREST.url
 // var url1 = require('postgrest-url').url
 //import {url as pgUrl} from 'postgrest-url'
 //console.log(url)
-import SyncPromise from "./SyncPromise"
+
 var PostgREST = require('postgrest-client')
-var PGApi = new PostgREST('http://127.0.0.1:3030')
+export var PGApi = new PostgREST(pgUrl)
 
-const fetch = require('node-fetch');
+//const fetch = require('node-fetch');
 
-
-
-
-const getRange = (page=1) => {
+export const getRange = (page=1) => {
   startItem = (page-1)*maxRowList
   endItem = startItem+maxRowList -1
   return {
@@ -26,63 +25,14 @@ const getRange = (page=1) => {
 
 }
 
-
 export const Api = new Restivus({
   apiPath: 'api/v1/',
   useDefaultAuth: true,
   prettyJson: true
 });
 
-const directoryPOST = (isCreate, param) => {
-  console.log("111=========", {id: param.id})
-  if (isCreate) return PGApi.post('/directory').send(param)
-  else {
-    if (param.id) {
-      return PGApi.patch('/directory').send(param).match({id: param.id})
-    }
-    return "error" 
 
-  }
-  
-
-}
-
-
-const directoryGET = (param={}, rangePage) => {
-  console.log("rangePage",rangePage)
-  return PGApi.get('/directory').order('userid', 'desc').match(param).range(rangePage.startItem, rangePage.endItem)//.then(data => console.log(data))
-}
-
-
-
-
-Api.addRoute('directory', { authRequired: false }, {
-  get() {
-    console.log('directory GET')
-    const { id, page } = this.queryParams;
-    let param = ''
-    if (id) {
-      param = {id: id}
-    } 
-    // if (!page) { page=1}
-
-    return SyncPromise(directoryGET(param, getRange(page)))
-  },
-  post() {
-    console.log('directory POST')
-    const { isCreate, id, directory } = this.bodyParams;
-    return SyncPromise(directoryPOST(isCreate, directory ))
-
-  },
-  head() {
-    
-    console.log('directory HEAD')
-    return SyncPromise(directoryHEAD())
-  },
-
-});
-
-const countRowTable = (tableName) => {
+export const countRowTable = (tableName) => {
   console.log('countRowTable', tableName)
   return PGApi.get('/'+tableName+'?select=count')
 }
@@ -96,13 +46,13 @@ Api.addRoute('countRowTable', { authRequired: false }, {
 
 });
 
-Api.addRoute('postgres', { authRequired: false }, {
-  get() {
-    console.log('postgres')
-    return SyncPromise(postgres())
-  },
+// Api.addRoute('postgres', { authRequired: false }, {
+//   get() {
+//     console.log('postgres')
+//     return SyncPromise(postgres())
+//   },
 
-});
+// });
 
 
 // const directoryGET = (param='') => {

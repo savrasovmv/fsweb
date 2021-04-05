@@ -21,6 +21,8 @@ import {Home } from './pages/Home'
 import {DirectoryList } from './pages/DirectoryList'
 import {Directory } from './pages/Directory'
 import {ContactsList} from './pages/ContactsList'
+import { GroupsList } from './pages/GroupsList';
+import { Groups } from './pages/Groups';
 
 const drawerWidth = 240;
 
@@ -108,6 +110,18 @@ export const Page = () => {
             </Route>
             <Route path="/directory">
               <DirectoryList />
+            </Route>
+            <Route path="/groupsCreate">
+              <Groups isCreate={true}/>
+            </Route>
+            <Route path="/groups::id/directory::id">
+              <Directory  redirect="/groups"/>
+            </Route>
+            <Route path="/groups::id">
+              <Groups />
+            </Route>
+            <Route path="/groups">
+              <GroupsList />
             </Route>
             <Route path="/">
               <Home />

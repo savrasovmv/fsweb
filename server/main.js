@@ -2,7 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { LinksCollection } from '/imports/api/links';
 import { Accounts } from 'meteor/accounts-base';
 
-import './api/api'
+import './api'
 
 const { Client } = require('pg')
 

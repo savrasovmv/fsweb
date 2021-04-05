@@ -32,33 +32,27 @@ const useStyles = makeStyles((theme) => ({
 
 const thisPath = window.location.pathname
 
-export const DirectoryList = () => {
-  const [direrctoryList, setDirectoryList] = React.useState([])
+export const GroupsList = () => {
+
+  const [item, setItem] = React.useState([])
+  //const [direrctoryList, setDirectoryList] = React.useState([])
   const [countPage, setCountPage] = React.useState(0)
   const [page, setPage] = React.useState(1)
   const [totalItem, setTotalItem] = React.useState(0)
   const classes = useStyles();
 
   useEffect(()=>{
-    //APIClient.v1.get('getDirectoryList', {})
-    
-    APIClient.v1.get('directory', {page: page})
+    APIClient.v1.get('groups', {page: page})
       .then((resolve) => {
         console.log('111', resolve)
-        //console.log('222',resolve.headers.get('Content-Type'))
-        //setDirectoryList(resolve.result)
-        setDirectoryList(resolve)
-
+        setItem(resolve)
       })
       .catch((error) => {
         console.log('Err = ', error)
-        setDirectoryList([])
+        setItem([])
       })
 
-      // const res = APIClient.v1.get('directory', {})
-      // console.log("222", res.headers.get('Content-Type'))
-
-      APIClient.v1.get('countRowTable', {tableName : 'directory'})
+      APIClient.v1.get('countRowTable', {tableName : 'groups'})
       .then((resolve) => {
         console.log('COUNT', resolve)
         if (resolve.length>0){ 
@@ -69,15 +63,10 @@ export const DirectoryList = () => {
            console.log('COUNT', resolve[0].count)
            setTotalItem(count)
           }
-
-          
-
       })
       .catch((error) => {
         console.log('Err = ', error)
       })
-    
-
 
   },[page])
   let { path, url } = useRouteMatch();
@@ -90,7 +79,7 @@ export const DirectoryList = () => {
 
   return (
     <React.Fragment>
-      <Title>Список директорий</Title>
+      <Title>Группы</Title>
       <Box display="flex" p={1} m={1} width="100%">
       
 
@@ -111,13 +100,13 @@ export const DirectoryList = () => {
             size="small"
             startIcon={<AddIcon />}
             component={ReactLink}
-            to='/directoryCreate'
+            to='/groupsCreate'
           >
             Добавить
           </Button>
         </Box>
       </Box>
-      {direrctoryList ? (
+      {item ? (
         <>
         
         
@@ -125,10 +114,10 @@ export const DirectoryList = () => {
           <TableHead>
             <TableRow>
               <TableCell>id</TableCell>
-              <TableCell>callgroup</TableCell>
-              <TableCell>userid</TableCell>
-              {/* <TableCell>effective_caller_id_name</TableCell>
-              <TableCell >effective_caller_id_number</TableCell> */}
+              <TableCell>domain</TableCell>
+              <TableCell>name</TableCell>
+              <TableCell>effective_caller_id_name</TableCell>
+              <TableCell >effective_caller_id_number</TableCell>
               <TableCell >Редак.</TableCell>
             </TableRow>
           </TableHead>
@@ -136,13 +125,13 @@ export const DirectoryList = () => {
 
 
 
-            {direrctoryList.map((row) => (
+            {item.map((row) => (
               <TableRow key={row.id}>
                 <TableCell>{row.id}</TableCell>
-                <TableCell>{row.groups.name}</TableCell>
-                <TableCell>{row.userid}</TableCell>
-                {/* <TableCell>{row.effective_caller_id_name}</TableCell>
-                <TableCell>{row.effective_caller_id_number}</TableCell> */}
+                <TableCell>{row.domain}</TableCell>
+                <TableCell>{row.name}</TableCell>
+                <TableCell>{row.effective_caller_id_name}</TableCell>
+                <TableCell>{row.effective_caller_id_number}</TableCell>
                 <TableCell>
                 <IconButton component={ReactLink} to={url+':'+row.id}>
                   <EditIcon />
