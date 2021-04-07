@@ -3,6 +3,7 @@ import Link from '@material-ui/core/Link';
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import Box from '@material-ui/core/Box';
+import TableContainer from '@material-ui/core/TableContainer';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
@@ -13,6 +14,7 @@ import IconButton from '@material-ui/core/IconButton';
 import EditIcon from '@material-ui/icons/Edit';
 import AddIcon from '@material-ui/icons/Add';
 import Button from '@material-ui/core/Button';
+import Paper from '@material-ui/core/Paper'
 import Pagination from '@material-ui/lab/Pagination';
 import { Link as ReactLink, useRouteMatch } from 'react-router-dom'
 
@@ -22,7 +24,7 @@ import { Link as ReactLink, useRouteMatch } from 'react-router-dom'
 import configData from "../../../config/default.json";
 
 const maxRowList = configData.Pages.maxRowList
-console.log("maxRowList", maxRowList)
+
 
 const useStyles = makeStyles((theme) => ({
   seeMore: {
@@ -32,33 +34,27 @@ const useStyles = makeStyles((theme) => ({
 
 const thisPath = window.location.pathname
 
-const TABLE  = 'web_directory'
+const TABLE = 'web_users'
 
-export const DirectoryList = () => {
-  const [direrctoryList, setDirectoryList] = React.useState([])
+export const UsersList = () => {
+
+  const [item, setItem] = React.useState([])
+  //const [direrctoryList, setDirectoryList] = React.useState([])
   const [countPage, setCountPage] = React.useState(0)
   const [page, setPage] = React.useState(1)
   const [totalItem, setTotalItem] = React.useState(0)
   const classes = useStyles();
 
   useEffect(()=>{
-    //APIClient.v1.get('getDirectoryList', {})
-    
     APIClient.v1.get(TABLE, {page: page})
       .then((resolve) => {
         console.log('111', resolve)
-        //console.log('222',resolve.headers.get('Content-Type'))
-        //setDirectoryList(resolve.result)
-        setDirectoryList(resolve)
-
+        setItem(resolve)
       })
       .catch((error) => {
         console.log('Err = ', error)
-        setDirectoryList([])
+        setItem([])
       })
-
-      // const res = APIClient.v1.get('directory', {})
-      // console.log("222", res.headers.get('Content-Type'))
 
       APIClient.v1.get('countRowTable', {tableName : TABLE})
       .then((resolve) => {
@@ -71,15 +67,10 @@ export const DirectoryList = () => {
            console.log('COUNT', resolve[0].count)
            setTotalItem(count)
           }
-
-          
-
       })
       .catch((error) => {
         console.log('Err = ', error)
       })
-    
-
 
   },[page])
   let { path, url } = useRouteMatch();
@@ -92,7 +83,7 @@ export const DirectoryList = () => {
 
   return (
     <React.Fragment>
-      <Title>Список директорий</Title>
+      <Title>Группы</Title>
       <Box display="flex" p={1} m={1} width="100%">
       
 
@@ -113,24 +104,24 @@ export const DirectoryList = () => {
             size="small"
             startIcon={<AddIcon />}
             component={ReactLink}
-            to={'/' + TABLE + 'Create'}
+            to={'/'+ TABLE+'Create'}
           >
             Добавить
           </Button>
         </Box>
       </Box>
-      {direrctoryList ? (
+      {item ? (
         <>
         
-        
+        <TableContainer component={Paper}>
         <Table size="small">
           <TableHead>
             <TableRow>
               <TableCell>id</TableCell>
-              <TableCell>callgroup</TableCell>
-              <TableCell>userid</TableCell>
-              {/* <TableCell>effective_caller_id_name</TableCell>
-              <TableCell >effective_caller_id_number</TableCell> */}
+              <TableCell>domain</TableCell>
+              <TableCell>name</TableCell>
+              <TableCell>effective_caller_id_name</TableCell>
+              <TableCell >effective_caller_id_number</TableCell>
               <TableCell >Редак.</TableCell>
             </TableRow>
           </TableHead>
@@ -138,16 +129,16 @@ export const DirectoryList = () => {
 
 
 
-            {direrctoryList.map((row) => (
+            {item.map((row) => (
               <TableRow key={row.id}>
                 <TableCell>{row.id}</TableCell>
-                <TableCell>{row.groups.name}</TableCell>
-                <TableCell>{row.userid}</TableCell>
-                {/* <TableCell>{row.effective_caller_id_name}</TableCell>
-                <TableCell>{row.effective_caller_id_number}</TableCell> */}
+                <TableCell>{row.domain}</TableCell>
+                <TableCell>{row.name}</TableCell>
+                <TableCell>{row.effective_caller_id_name}</TableCell>
+                <TableCell>{row.effective_caller_id_number}</TableCell>
                 <TableCell>
                 <IconButton component={ReactLink} to={url+':'+row.id}>
-                  <EditIcon />
+                  <EditIcon fontSize="small"/>
                 </IconButton>
                 </TableCell>
               </TableRow>
@@ -156,6 +147,7 @@ export const DirectoryList = () => {
 
           </TableBody>
         </Table>
+        </TableContainer>
         </>
       ) : "Нет данных"}
       {/* <div className={classes.seeMore}>

@@ -68,7 +68,7 @@ const FormField = ({ name, errors, register, disabled=false }) => {
                 name={name}
                 disabled = {disabled ? true : false }
             />
-            {errors[name] && <font color="red">{errors[name].message}</font>}
+            {errors[name] && <font color="red">{errors[name].message}<br/></font>}
 
         </>
     )
@@ -132,7 +132,7 @@ export const Directory = ({ isCreate = false, redirect='/directory' }) => {
         console.log("event===", event)
         console.log("data===", data)
         delete data.groups
-        APIClient.v1.post('directory', {}, { isCreate: isCreate, directory: data })
+        APIClient.v1.post('directory', {}, { isCreate: isCreate, data: data })
             .then((resolve) => {
                 console.log('result', resolve)
                 console.log('history.goBack()', history)

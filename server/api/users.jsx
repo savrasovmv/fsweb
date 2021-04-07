@@ -1,12 +1,10 @@
-//import { Meteor } from 'meteor/meteor';
 import {PGApi, getRange, Api } from './api'
 import SyncPromise from "./SyncPromise"
 
-
-const TABLE = 'web_directory'
+const TABLE = 'web_users'
 
 const valuePOST = (isCreate, data) => {
-    console.log("111=========", {id: data.id})
+    console.log("data", data)
     if (isCreate) return PGApi.post('/'+TABLE).send(data)
     else {
       if (data.id) {
@@ -17,28 +15,24 @@ const valuePOST = (isCreate, data) => {
   }
   
   const valueGET = (param={}, rangePage) => {
-    console.log("rangePage",rangePage)
-    return PGApi.get('/'+TABLE+'?select=*,web_users(name)').order('regname', 'desc').match(param).range(rangePage.startItem, rangePage.endItem)
+    return PGApi.get('/'+TABLE).order('name', 'desc').match(param).range(rangePage.startItem, rangePage.endItem)//.then(data => console.log(data))
   }
   
-  Api.addRoute('web_directory', { authRequired: true }, {
+  Api.addRoute(TABLE, { authRequired: true }, {
     get() {
       console.log('GET:' + TABLE +' param' + this.queryParams)
-      const { id, page, users_id } = this.queryParams;
+      const { id, page } = this.queryParams;
       let param = ''
       if (id) {
         param = {id: id}
       } 
-      if (users_id) {
-        param = {users_id: users_id}
-      }
       return SyncPromise(valueGET(param, getRange(page)))
     },
     post() {
       console.log('POST:' + TABLE +' param' + this.bodyParams)
-      const { isCreate, id, data } = this.bodyParams;
+      const { isCreate, data } = this.bodyParams;
+      console.log('isCreate:', isCreate)
       return SyncPromise(valuePOST(isCreate, data ))
   
     },
   });
-  

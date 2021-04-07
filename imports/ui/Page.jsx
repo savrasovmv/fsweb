@@ -23,6 +23,9 @@ import {Directory } from './pages/Directory'
 import {ContactsList} from './pages/ContactsList'
 import { GroupsList } from './pages/GroupsList';
 import { Groups } from './pages/Groups';
+import { Users } from './pages/Users';
+import { UsersList } from './pages/UsersList';
+import { Settings } from './pages/Settings';
 
 const drawerWidth = 240;
 
@@ -99,16 +102,22 @@ export const Page = () => {
           <Switch>
             
             
-            <Route path="/contacts">
-              <ContactsList />
+            <Route path="/web_users::id">
+              <Users />
             </Route>
-            <Route path="/directory::id">
+            <Route path="/web_usersCreate">
+              <Users isCreate={true}/>
+            </Route>
+            <Route path="/web_users">
+              <UsersList />
+            </Route>
+            <Route path="/web_directory::id">
               <Directory />
             </Route>
-            <Route path="/directoryCreate">
+            <Route path="/web_directoryCreate">
               <Directory isCreate={true}/>
             </Route>
-            <Route path="/directory">
+            <Route path="/web_directory">
               <DirectoryList />
             </Route>
             <Route path="/groupsCreate">
@@ -122,6 +131,9 @@ export const Page = () => {
             </Route>
             <Route path="/groups">
               <GroupsList />
+            </Route>
+            <Route path="/settings">
+              <Settings/>
             </Route>
             <Route path="/">
               <Home />

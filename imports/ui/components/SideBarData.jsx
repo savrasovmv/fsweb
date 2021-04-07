@@ -4,16 +4,24 @@ export const SideBarData = [
             path: "/"
         },
         {
-            title: "Derictory",
-            path: "directory"
+            title: "Пользователи",
+            path: "web_users"
         },
         {
-            title: "Contacts",
-            path: "contacts"
+            title: "Регистрации",
+            path: "web_directory"
         },
         {
             title: "Группы",
-            path: "groups"
+            path: "web_callgroup"
+        },
+        {
+            title: "Конференции",
+            path: "web_conference"
+        },
+        {
+            title: "Настройки",
+            path: "settings"
         }
 
 

@@ -1,3 +1,6 @@
 import './api'
+import './domain'
+import './context'
+import './users'
 import './directory'
 import './groups'
