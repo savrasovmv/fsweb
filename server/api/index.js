@@ -1,6 +1,7 @@
 import './api'
 import './domain'
 import './context'
+import './phoneModel'
 import './users'
 import './directory'
 import './groups'

@@ -102,12 +102,16 @@ export const Page = () => {
           <Switch>
             
             
+            <Route path="/web_users::id/web_directoryCreate:users">
+              <Directory isCreate={true} redirect="/web_users"/>
+            </Route>
             <Route path="/web_users::id">
               <Users />
             </Route>
             <Route path="/web_usersCreate">
               <Users isCreate={true}/>
             </Route>
+            
             <Route path="/web_users">
               <UsersList />
             </Route>

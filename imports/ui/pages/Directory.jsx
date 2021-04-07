@@ -7,9 +7,12 @@ import {
     useRouteMatch
 } from "react-router-dom";
 
+import { Title } from '../components/Title';
+
 import history from "../../utils/history";
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
+import { ButtonGroup, FormControl, Select } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
 
 import Input from '@material-ui/core/Input';
@@ -35,11 +38,11 @@ import * as yup from "yup";
 
 const schema = yup.object().shape({
     // domain: yup.string().required(),
-    userid: yup.string().required().min(3, "Минимум 3 символа"),
+    regname: yup.string().required().min(3, "Минимум 3 символа"),
     // mailbox: yup.string(),
     // "number-alias": yup.string(),
     // cidr: yup.string(),
-    password: yup.string(),
+    password: yup.string().required().min(6, "Минимум 6 символа"),
     // toll_allow: yup.string(),
     // user_context: yup.string(),
     // default_gateway: yup.string(),
@@ -53,32 +56,50 @@ const schema = yup.object().shape({
     // uservar3: yup.string(),
 });
 
-
-const FormField = ({ name, errors, register, disabled=false }) => {
+const FormField = ({ name, errors, register }) => {
     return (
-        <>
+        <Box>
 
-            <TextField
-                variant="outlined"
-                margin="normal"
-                fullWidth
-                inputRef={register}
+            <input
+                type="text"
+                ref={register}
                 id={name}
                 label={name}
                 name={name}
-                disabled = {disabled ? true : false }
-            />
-            {errors[name] && <font color="red">{errors[name].message}<br/></font>}
 
-        </>
+            />
+
+            {errors[name] && <font color="red">{errors[name].message}<br /></font>}
+
+        </Box>
     )
 }
+
+// const FormField = ({ name, errors, register, disabled=false }) => {
+//     return (
+//         <>
+
+//             <TextField
+//                 variant="outlined"
+//                 margin="normal"
+//                 fullWidth
+//                 inputRef={register}
+//                 id={name}
+//                 label={name}
+//                 name={name}
+//                 disabled = {disabled ? true : false }
+//             />
+//             {errors[name] && <font color="red">{errors[name].message}<br/></font>}
+
+//         </>
+//     )
+// }
 
 
 
 //console.log("directoryTables", directoryTables)
-export const Directory = ({ isCreate = false, redirect='/directory' }) => {
-    //const [directory, setDirectory] = useState(defaultDirectory)
+export const Directory = ({ isCreate = false }) => {
+    const [phoneModel, setPhoneModel] = useState([])
     const [open, setOpen] = useState(false)
 
     
@@ -91,21 +112,21 @@ export const Directory = ({ isCreate = false, redirect='/directory' }) => {
         }
     )
 
-    let { id, group_id } = useParams();
+    let { id, users } = useParams();
 
     useEffect(() => {
         //APIClient.v1.get('getDirectoryById', { directoryId: id })
         
         if (!isCreate) {
-            APIClient.v1.get('directory', { id: id })
-                .then((resolve) => {
-                    console.log('111', resolve)
+            dir = APIClient.v1.get('web_directory', { id: id })
+            dir.then((resolve) => {
+                    console.log('web_directory', resolve)
                     //setDirectory(resolve.result[0])
                     if (resolve.length > 0) {
 
                         for (const [key, value] of Object.entries(resolve[0])) {
                             //console.log(`${key}: ${value}`);
-                            if (key === 'groups') {
+                            if (key === 'users') {
                                 setValue(key, value.name)
 
                             } else {
@@ -113,14 +134,48 @@ export const Directory = ({ isCreate = false, redirect='/directory' }) => {
                             }
                         }
 
-                        setOpen(true)
+                       
                     }
                 })
                 .catch((error) => {
                     console.log('Err = ', error)
                 })
+
+            model = APIClient.v1.get('web_phone_model', {})
+            model.then((resolve) => {
+                console.log('web_phone_model', resolve)
+                //setDirectory(resolve.result[0])
+                if (resolve.length > 0) {
+                    setPhoneModel(resolve)
+                }
+            })
+            .catch((error) => {
+                console.log('Err = ', error)
+            })
+
+            Promise.all([dir, model]).then(() => {
+                //console.log("values", values);
+                setOpen(true)
+            });
         } else {
-            setOpen(true)
+            model = APIClient.v1.get('web_phone_model', {})
+            model.then((resolve) => {
+                console.log('web_phone_model', resolve)
+                //setDirectory(resolve.result[0])
+                if (resolve.length > 0) {
+                    setPhoneModel(resolve)
+                }
+            })
+            .catch((error) => {
+                console.log('Err = ', error)
+            })
+            Promise.all([model]).then(() => {
+                //console.log("values", values);
+                setOpen(true)
+            });
+            setValue('users_id', id)
+            setValue('web_users', users)
+            //setOpen(true)
         }
         
 
@@ -128,14 +183,13 @@ export const Directory = ({ isCreate = false, redirect='/directory' }) => {
     }, [])
 
    
-    const handleSubmitClick = (data, event) => {
-        console.log("event===", event)
+    const handleSubmitClick = (data) => {
         console.log("data===", data)
-        delete data.groups
-        APIClient.v1.post('directory', {}, { isCreate: isCreate, data: data })
+        delete data.web_users
+        APIClient.v1.post('web_directory', {}, { isCreate: isCreate, data: data })
             .then((resolve) => {
                 console.log('result', resolve)
-                console.log('history.goBack()', history)
+                // console.log('history.goBack()', history)
                 history.goBack()
 
             })
@@ -147,32 +201,86 @@ export const Directory = ({ isCreate = false, redirect='/directory' }) => {
     }
 
     //const handleCancel = () =
-    console.log("history.location.pathname", history)
+    //console.log("history.location.pathname", history)
     return (
         <React.Fragment>
-            <h1>Директория пользователя</h1>
+            <Title>Директория пользователя</Title>
             <form noValidate autoComplete="off" onSubmit={handleSubmit(handleSubmitClick)}>
                 {open ? (
-                    <Box width="50%" m={1}>
-                        <FormField name="groups" disabled={true} errors={errors} register={register}/>
-                        <FormField name="userid" errors={errors} register={register}/>
-                        {/* <FormField name="number-alias" errors={errors} register={register}/>
-                        <FormField name="mailbox" errors={errors} register={register}/>*/}
+                    <Box>
+                        <Box display="flex" justifyContent="flex-end">
+                            <ButtonGroup>
+                                <Button
+                                    type="submit"
+                                    variant="contained"
+                                    color="primary"
+                                >
+                                    Сохранить
+                                </Button>
+
+                                <Button
+                                    //type="submit"
+                                    variant="contained"
+                                    color="secondary"
+                                    onClick={() => history.goBack()}
+                                >
+
+                                    Отмена
+                                </Button>
+                            </ButtonGroup>
+                        </Box>
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <td>Пользователь</td>
+                                    <td><FormField disabled={true} name="web_users" errors={errors} register={register} /></td>
+                                </tr>
+                                <tr>
+                                    <td>Регистрационное имя</td>
+                                    <td><FormField name="regname" errors={errors} register={register} /></td>
+                                </tr>
+                                <tr>
+                                    <td>cidr</td>
+                                    <td><FormField name="cidr" errors={errors} register={register} /></td>
+                                </tr>
+                                <tr>
+                                    <td>Пароль</td>
+                                    <td><FormField name="password" errors={errors} register={register} /></td>
+                                </tr>
+                                <tr>
+                                    <td>Стационарный телефон</td>
+                                    <td><input type="checkbox" ref={register} name="isphone" id="isphone" /></td>
+                                </tr>
+                                <tr>
+                                    <td>Mac адрес телефона</td>
+                                    <td><FormField name="mac_address" errors={errors} register={register} /></td>
+                                </tr>
+                                <tr>
+                                    <td>Модель</td>
+                                    <td>
+                                        <select ref={register} name="phone_model_id" id="phone_model_id" >
+                                            {phoneModel.map((option) => (
+                                                <option key={option.id} value={option.id}>
+                                                    {option.name}
+                                                </option>
+                                            ))}
+                                        </select>
+
+                                    </td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                        {/* <FormField name="users" disabled={true} errors={errors} register={register}/>
+                        <FormField name="regname" errors={errors} register={register}/>
                         <FormField name="cidr" errors={errors} register={register}/>
                         <FormField name="password" errors={errors} register={register}/>
-                        {/* <FormField name="toll_allow" errors={errors} register={register}/>
-                        <FormField name="user_context" errors={errors} register={register}/>
-                        <FormField name="default_gateway" errors={errors} register={register}/>
-                        <FormField name="effective_caller_id_name" errors={errors} register={register}/>
-                        <FormField name="effective_caller_id_number" errors={errors} register={register}/>
-                        <FormField name="outbound_caller_id_name" errors={errors} register={register}/>
-                        <FormField name="outbound_caller_id_number" errors={errors} register={register}/>
-                        <FormField name="callgroup" errors={errors} register={register}/>
-                        <FormField name="uservar1" errors={errors} register={register}/>
-                        <FormField name="uservar2" errors={errors} register={register}/>
-                        <FormField name="uservar3" errors={errors} register={register}/> */}
+                        <FormField name="mac_address" errors={errors} register={register}/>
+                        <FormField name="password" errors={errors} register={register}/>
+                        <FormField name="password" errors={errors} register={register}/> */}
                         
-                            <Button
+                        
+                            {/* <Button
                                 type="submit"
                                 variant="contained"
                                 color="primary"
@@ -181,16 +289,13 @@ export const Directory = ({ isCreate = false, redirect='/directory' }) => {
                             </Button>
 
                             <Button
-                                //type="submit"
                                 variant="contained"
                                 color="secondary"
                                 onClick={()=>history.goBack()}
-                                //component={ReactLink}
-                                //to={history.location.pathname}
                             >
 
                                 Отмена
-                            </Button>
+                            </Button> */}
                        
                     
                     
