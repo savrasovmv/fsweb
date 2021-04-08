@@ -3,6 +3,7 @@ import Link from '@material-ui/core/Link';
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import Box from '@material-ui/core/Box';
+import TableContainer from '@material-ui/core/TableContainer';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
@@ -13,8 +14,10 @@ import IconButton from '@material-ui/core/IconButton';
 import EditIcon from '@material-ui/icons/Edit';
 import AddIcon from '@material-ui/icons/Add';
 import Button from '@material-ui/core/Button';
+import Paper from '@material-ui/core/Paper'
 import Pagination from '@material-ui/lab/Pagination';
 import { Link as ReactLink, useRouteMatch } from 'react-router-dom'
+const { utoa, atou } = require("unicode-encode");
 
 // const config = require('config');
 
@@ -22,7 +25,7 @@ import { Link as ReactLink, useRouteMatch } from 'react-router-dom'
 import configData from "../../../config/default.json";
 
 const maxRowList = configData.Pages.maxRowList
-console.log("maxRowList", maxRowList)
+
 
 const useStyles = makeStyles((theme) => ({
   seeMore: {
@@ -32,19 +35,22 @@ const useStyles = makeStyles((theme) => ({
 
 const thisPath = window.location.pathname
 
-export const GroupsList = () => {
+const TABLE = 'web_callgroup'
+
+export const CallGroupList = () => {
+  console.log("render", TABLE)
 
   const [item, setItem] = React.useState([])
-  //const [direrctoryList, setDirectoryList] = React.useState([])
+  const [filter, setFilter] = React.useState('')
   const [countPage, setCountPage] = React.useState(0)
   const [page, setPage] = React.useState(1)
   const [totalItem, setTotalItem] = React.useState(0)
   const classes = useStyles();
 
   useEffect(()=>{
-    APIClient.v1.get('groups', {page: page})
+    APIClient.v1.get(TABLE, {page: page, filter: filter})
       .then((resolve) => {
-        console.log('111', resolve)
+        console.log('web_callgroup', resolve)
         setItem(resolve)
       })
       .catch((error) => {
@@ -52,7 +58,8 @@ export const GroupsList = () => {
         setItem([])
       })
 
-      APIClient.v1.get('countRowTable', {tableName : 'groups'})
+
+      APIClient.v1.get('countRowTable', {tableName : TABLE, filter: filter})
       .then((resolve) => {
         console.log('COUNT', resolve)
         if (resolve.length>0){ 
@@ -67,30 +74,51 @@ export const GroupsList = () => {
       .catch((error) => {
         console.log('Err = ', error)
       })
+    
 
-  },[page])
+     
+  },[page, filter])
+
   let { path, url } = useRouteMatch();
-  console.log('path', path)
-  console.log('url', url)
+  // console.log('path', path)
+  // console.log('url', url)
 
   const handleChange = (event, value) => {
     setPage(value);
   };
+  
+
+  const hendleSearch = (event) => {
+    //setPage(value);
+    if (event.keyCode === 13) {
+      //alert(event.target.value)
+      value = event.target.value
+      
+      setFilter("or=(name.ilike.*"+value+"*,number.ilike.*"+value+"*)")
+      console.log(filter)
+
+    }
+  };
 
   return (
     <React.Fragment>
-      <Title>Группы</Title>
+      <Title>Группы вызовов</Title>
       <Box display="flex" p={1} m={1} width="100%">
       
 
         <Box flexGrow={1}  >
           <Box display="flex">
+            <Box p={1}>
+              
+              <input type="text" placeholder="Поиск по Номеру или Имени" onKeyDown={hendleSearch}/>
+            </Box>
             <Box   p={1}>
               Всего: {totalItem}
             </Box>
             <Box alignItems="center">
               <Pagination count={countPage} shape="rounded" page={page} onChange={handleChange} />
             </Box>
+
           </Box> 
         </Box>
         <Box  alignItems="center">
@@ -100,7 +128,7 @@ export const GroupsList = () => {
             size="small"
             startIcon={<AddIcon />}
             component={ReactLink}
-            to='/groupsCreate'
+            to={'/'+ TABLE+'Create'}
           >
             Добавить
           </Button>
@@ -109,16 +137,14 @@ export const GroupsList = () => {
       {item ? (
         <>
         
-        
+        <TableContainer component={Paper}>
         <Table size="small">
           <TableHead>
             <TableRow>
               <TableCell>id</TableCell>
-              <TableCell>domain</TableCell>
-              <TableCell>name</TableCell>
-              <TableCell>effective_caller_id_name</TableCell>
-              <TableCell >effective_caller_id_number</TableCell>
-              <TableCell >Редак.</TableCell>
+              <TableCell>Номер</TableCell>
+              <TableCell>Наименование</TableCell>
+              <TableCell>Редак.</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -128,13 +154,11 @@ export const GroupsList = () => {
             {item.map((row) => (
               <TableRow key={row.id}>
                 <TableCell>{row.id}</TableCell>
-                <TableCell>{row.domain}</TableCell>
+                <TableCell>{row.number}</TableCell>
                 <TableCell>{row.name}</TableCell>
-                <TableCell>{row.effective_caller_id_name}</TableCell>
-                <TableCell>{row.effective_caller_id_number}</TableCell>
                 <TableCell>
                 <IconButton component={ReactLink} to={url+':'+row.id}>
-                  <EditIcon />
+                  <EditIcon fontSize="small"/>
                 </IconButton>
                 </TableCell>
               </TableRow>
@@ -143,13 +167,9 @@ export const GroupsList = () => {
 
           </TableBody>
         </Table>
+        </TableContainer>
         </>
       ) : "Нет данных"}
-      {/* <div className={classes.seeMore}>
-        <Link color="primary" href="#" onClick={preventDefault}>
-          See more orders
-        </Link>
-      </div> */}
 
     </React.Fragment>
   );

@@ -125,8 +125,8 @@ export const Directory = ({ isCreate = false }) => {
                     if (resolve.length > 0) {
 
                         for (const [key, value] of Object.entries(resolve[0])) {
-                            //console.log(`${key}: ${value}`);
-                            if (key === 'users') {
+                            console.log(`${key}: ${value}`);
+                            if (key === 'web_users') {
                                 setValue(key, value.name)
 
                             } else {
@@ -233,7 +233,7 @@ export const Directory = ({ isCreate = false }) => {
                             <tbody>
                                 <tr>
                                     <td>Пользователь</td>
-                                    <td><FormField disabled={true} name="web_users" errors={errors} register={register} /></td>
+                                    <td><input type="text" readOnly ref={register} id="web_users" name="web_users"/></td>
                                 </tr>
                                 <tr>
                                     <td>Регистрационное имя</td>

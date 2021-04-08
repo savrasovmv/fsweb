@@ -12,7 +12,7 @@ export const SideBarData = [
             path: "web_directory"
         },
         {
-            title: "Группы",
+            title: "Группы вызовов",
             path: "web_callgroup"
         },
         {

@@ -32,16 +32,19 @@ export const Api = new Restivus({
 });
 
 
-export const countRowTable = (tableName) => {
+export const countRowTable = (tableName, filter=false, textfilter='') => {
   console.log('countRowTable', tableName)
-  return PGApi.get('/'+tableName+'?select=count')
+  if (filter){
+    textfilter = '&' + encodeURI(filter)
+  }
+  return PGApi.get('/'+tableName+'?select=count'+textfilter)
 }
 
 Api.addRoute('countRowTable', { authRequired: false }, {
   get() {
     console.log('countRowTable')
-    const { tableName } = this.queryParams;
-    return SyncPromise(countRowTable(tableName))
+    const { tableName, filter } = this.queryParams;
+    return SyncPromise(countRowTable(tableName, filter))
   },
 
 });

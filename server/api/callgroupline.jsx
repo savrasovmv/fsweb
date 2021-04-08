@@ -1,7 +1,7 @@
 import {PGApi, getRange, Api } from './api'
 import SyncPromise from "./SyncPromise"
 
-const TABLE = 'web_users'
+const TABLE = 'web_callgroup_line'
 
 const valuePOST = (isCreate, data) => {
     console.log("data", data)
@@ -19,7 +19,7 @@ const valuePOST = (isCreate, data) => {
       textfilter = '?' + encodeURI(filter)
       console.log("textfilter", textfilter)
     }
-    return PGApi.get('/'+TABLE+textfilter).order('name', 'desc').match(param).range(rangePage.startItem, rangePage.endItem)//.then(data => console.log(data))
+    return PGApi.get('/'+TABLE+textfilter).order('id', 'desc').match(param).range(rangePage.startItem, rangePage.endItem)
   }
   
   Api.addRoute(TABLE, { authRequired: true }, {

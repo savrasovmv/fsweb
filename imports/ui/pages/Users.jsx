@@ -197,6 +197,27 @@ export const Users = ({ isCreate = false }) => {
 
     useEffect(() => {
         //APIClient.v1.get('getDirectoryById', { directoryId: id })
+        dom = APIClient.v1.get('/web_domain', {})
+        dom.then((resolve) => {
+            console.log('domain', resolve)
+            setDomain(resolve)
+
+        })
+            .catch((error) => {
+                console.log('Err = ', error)
+                setDomain([])
+            })
+        con = APIClient.v1.get('/web_context', {})
+        con.then((resolve) => {
+            console.log('context', resolve)
+            setContext(resolve)
+
+        })
+        .catch((error) => {
+            console.log('Err = ', error)
+            setContext([])
+        })
+
         if (!isCreate) {
             users = APIClient.v1.get(TABLE, { id: id })
             users.then((resolve) => {
@@ -232,32 +253,16 @@ export const Users = ({ isCreate = false }) => {
                 .catch((error) => {
                     console.log('Err = ', error)
                 })
-            dom = APIClient.v1.get('/web_domain', {})
-            dom.then((resolve) => {
-                console.log('domain', resolve)
-                setDomain(resolve)
-
-            })
-                .catch((error) => {
-                    console.log('Err = ', error)
-                    setDomain([])
-                })
-            con = APIClient.v1.get('/web_context', {})
-            con.then((resolve) => {
-                console.log('context', resolve)
-                setContext(resolve)
-
-            })
-            .catch((error) => {
-                console.log('Err = ', error)
-                setContext([])
-            })
+            
             Promise.all([users, dom, con]).then(() => {
                 //console.log("values", values);
                 setOpen(true)
             });
         } else {
-            setOpen(true)
+            Promise.all([dom, con]).then(() => {
+                //console.log("values", values);
+                setOpen(true)
+            });
         }
 
 
@@ -278,6 +283,28 @@ export const Users = ({ isCreate = false }) => {
                 //setDirectoryList(defaultDirectory)
             })
 
+    }
+
+    const handleDeleteDirectory = (directory_id) => {
+
+        console.log('DELETE', directory_id)
+        result = confirm("Вы действительно хотите удалить запись?");
+        if (result) {
+            APIClient.v1.delete(DIRECTORY_TABLE, { id: directory_id })
+            .then((resolve) => {
+                console.log('result', resolve)
+                //setDirectory(resolve.result[0])
+                console.log('Запись удалена')
+                 history.go(0)
+
+            })
+            .catch((error) => {
+                console.log('Err = ', error)
+                //setDirectoryList(defaultDirectory)
+            })
+
+            
+        }
     }
 
 
@@ -351,6 +378,10 @@ export const Users = ({ isCreate = false }) => {
                         {/* <FormField name="domain_id" errors={errors} register={register} /> */}
                         <table>
                             <tbody>
+                                 <tr>
+                                    <td>Отключен</td>
+                                    <td><input type="checkbox" ref={register} name="isdisable" id="isdisable" /></td>
+                                </tr>
                                 <tr>
                                     <td>Домен</td>
                                     <td>
@@ -384,6 +415,18 @@ export const Users = ({ isCreate = false }) => {
                                 <tr>
                                     <td>Номер</td>
                                     <td><FormField name="number-alias" errors={errors} register={register} /></td>
+                                </tr>
+                                <tr>
+                                    <td>Филиал</td>
+                                    <td><FormField name="ldap_ou" errors={errors} register={register} /></td>
+                                </tr>
+                                <tr>
+                                    <td>Отдел</td>
+                                    <td><FormField name="ldap_department" errors={errors} register={register} /></td>
+                                </tr>
+                                <tr>
+                                    <td>Должность</td>
+                                    <td><FormField name="ldap_title" errors={errors} register={register} /></td>
                                 </tr>
                                 <tr>
                                     <td>E-mail</td>
@@ -437,6 +480,7 @@ export const Users = ({ isCreate = false }) => {
                                     <td>transfer_number</td>
                                     <td><FormField name="transfer_number" errors={errors} register={register} /></td>
                                 </tr>
+
                             </tbody>
                         </table>
                         {/* <FormField name="name" errors={errors} register={register} />
@@ -505,17 +549,7 @@ export const Users = ({ isCreate = false }) => {
                             Добавить
                         </Button>
 
-                                <Button
-                                   variant="contained"
-                                   color="secondary"
-                                   size="small"
-                                   startIcon={<DeleteIcon />}
-                                   component={ReactLink}
-                                   to='/web_directoryDelete'
-                                >
-
-                                    Удалить
-                                </Button>
+                                
                             </ButtonGroup>
                         </Box>
 
@@ -524,8 +558,9 @@ export const Users = ({ isCreate = false }) => {
                         <TableHead>
                             <TableRow>
                                 <TableCell>id</TableCell>
-                                <TableCell>regname</TableCell>
-                                <TableCell>users</TableCell>
+                                <TableCell>Рег. имя</TableCell>
+                                <TableCell>Стац.тел</TableCell>
+                                <TableCell>Mac</TableCell>
                                 <TableCell >Редак.</TableCell>
                             </TableRow>
                         </TableHead>
@@ -537,12 +572,18 @@ export const Users = ({ isCreate = false }) => {
                                 <TableRow key={row.id}>
                                     <TableCell>{row.id}</TableCell>
                                     <TableCell>{row.regname}</TableCell>
-                                    <TableCell>{row.web_users.name}</TableCell>
+                                    <TableCell>{row.isphone ? 'Да' : 'Нет'}</TableCell>
+                                    <TableCell>{row.mac_address}</TableCell>
                                     {/* <TableCell>{row.effective_caller_id_name}</TableCell>
                     <TableCell>{row.effective_caller_id_number}</TableCell> */}
                                     <TableCell>
                                         <IconButton component={ReactLink} to={'/' + DIRECTORY_TABLE + ':' + row.id}>
                                             <EditIcon />
+                                        </IconButton>
+                                    </TableCell>
+                                    <TableCell>
+                                        <IconButton onClick={()=>handleDeleteDirectory(row.id)}>
+                                            <DeleteIcon />
                                         </IconButton>
                                     </TableCell>
                                 </TableRow>

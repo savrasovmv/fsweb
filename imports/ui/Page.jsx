@@ -21,11 +21,13 @@ import {Home } from './pages/Home'
 import {DirectoryList } from './pages/DirectoryList'
 import {Directory } from './pages/Directory'
 import {ContactsList} from './pages/ContactsList'
-import { GroupsList } from './pages/GroupsList';
-import { Groups } from './pages/Groups';
+import { CallGroupList } from './pages/CallGroupList';
+import { CallGroupLine } from './pages/CallGroupLine';
+import { CallGroup } from './pages/CallGroup';
 import { Users } from './pages/Users';
 import { UsersList } from './pages/UsersList';
 import { Settings } from './pages/Settings';
+
 
 const drawerWidth = 240;
 
@@ -111,10 +113,10 @@ export const Page = () => {
             <Route path="/web_usersCreate">
               <Users isCreate={true}/>
             </Route>
-            
             <Route path="/web_users">
               <UsersList />
             </Route>
+
             <Route path="/web_directory::id">
               <Directory />
             </Route>
@@ -124,18 +126,24 @@ export const Page = () => {
             <Route path="/web_directory">
               <DirectoryList />
             </Route>
-            <Route path="/groupsCreate">
-              <Groups isCreate={true}/>
+
+            <Route path="/web_callgroup_line::id">
+              <CallGroupLine />
             </Route>
-            <Route path="/groups::id/directory::id">
-              <Directory  redirect="/groups"/>
+            <Route path="/web_callgroup::id/web_callgrouplineCreate">
+              <CallGroupLine isCreate={true} redirect="/web_callgroup"/>
             </Route>
-            <Route path="/groups::id">
-              <Groups />
+            <Route path="/web_callgroupCreate">
+              <CallGroup isCreate={true}/>
             </Route>
-            <Route path="/groups">
-              <GroupsList />
+            <Route path="/web_callgroup::id">
+              <CallGroup />
             </Route>
+            <Route path="/web_callgroup">
+              <CallGroupList />
+            </Route>
+
+            
             <Route path="/settings">
               <Settings/>
             </Route>

@@ -17,6 +17,7 @@ import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper'
 import Pagination from '@material-ui/lab/Pagination';
 import { Link as ReactLink, useRouteMatch } from 'react-router-dom'
+const { utoa, atou } = require("unicode-encode");
 
 // const config = require('config');
 
@@ -39,14 +40,28 @@ const TABLE = 'web_users'
 export const UsersList = () => {
 
   const [item, setItem] = React.useState([])
-  //const [direrctoryList, setDirectoryList] = React.useState([])
+  const [filter, setFilter] = React.useState('')
   const [countPage, setCountPage] = React.useState(0)
   const [page, setPage] = React.useState(1)
   const [totalItem, setTotalItem] = React.useState(0)
   const classes = useStyles();
 
+  // useEffect(()=>{
+  //     APIClient.v1.get('/web_domain', {})
+  //     .then((resolve) => {
+  //       console.log('web_domain', resolve)
+  //       setDomain(resolve.reduce((obj, item) => (obj[item.id] = item.name, obj) ,{}))
+  //     })
+  //     .catch((error) => {
+  //       console.log('Err = ', error)
+  //       setDomain([])
+  //     })
+
+  // },[])
+ 
+
   useEffect(()=>{
-    APIClient.v1.get(TABLE, {page: page})
+    APIClient.v1.get(TABLE, {page: page, filter})
       .then((resolve) => {
         console.log('111', resolve)
         setItem(resolve)
@@ -56,7 +71,8 @@ export const UsersList = () => {
         setItem([])
       })
 
-      APIClient.v1.get('countRowTable', {tableName : TABLE})
+
+      APIClient.v1.get('countRowTable', {tableName : TABLE, filter})
       .then((resolve) => {
         console.log('COUNT', resolve)
         if (resolve.length>0){ 
@@ -71,8 +87,10 @@ export const UsersList = () => {
       .catch((error) => {
         console.log('Err = ', error)
       })
+    
 
-  },[page])
+     
+  },[page, filter])
   let { path, url } = useRouteMatch();
   console.log('path', path)
   console.log('url', url)
@@ -80,21 +98,39 @@ export const UsersList = () => {
   const handleChange = (event, value) => {
     setPage(value);
   };
+  
+
+  const hendleSearch = (event) => {
+    //setPage(value);
+    if (event.keyCode === 13) {
+      //alert(event.target.value)
+      value = event.target.value
+      
+      setFilter("or=(name.ilike.*"+value+"*,number-alias.ilike.*"+value+"*)")
+      console.log(filter)
+
+    }
+  };
 
   return (
     <React.Fragment>
-      <Title>Группы</Title>
+      <Title>Пользователи</Title>
       <Box display="flex" p={1} m={1} width="100%">
       
 
         <Box flexGrow={1}  >
           <Box display="flex">
+            <Box p={1}>
+              
+              <input type="text" placeholder="Поиск по Номеру или ФИО" onKeyDown={hendleSearch}/>
+            </Box>
             <Box   p={1}>
               Всего: {totalItem}
             </Box>
             <Box alignItems="center">
               <Pagination count={countPage} shape="rounded" page={page} onChange={handleChange} />
             </Box>
+
           </Box> 
         </Box>
         <Box  alignItems="center">
@@ -118,10 +154,13 @@ export const UsersList = () => {
           <TableHead>
             <TableRow>
               <TableCell>id</TableCell>
-              <TableCell>domain</TableCell>
-              <TableCell>name</TableCell>
-              <TableCell>effective_caller_id_name</TableCell>
-              <TableCell >effective_caller_id_number</TableCell>
+              <TableCell>Номер</TableCell>
+              <TableCell>ФИО</TableCell>
+              <TableCell>Маршруты</TableCell>
+              <TableCell >Филиал</TableCell>
+              <TableCell >Отдел</TableCell>
+              <TableCell >Должность</TableCell>
+              <TableCell >Отключен</TableCell>
               <TableCell >Редак.</TableCell>
             </TableRow>
           </TableHead>
@@ -132,10 +171,13 @@ export const UsersList = () => {
             {item.map((row) => (
               <TableRow key={row.id}>
                 <TableCell>{row.id}</TableCell>
-                <TableCell>{row.domain}</TableCell>
+                <TableCell>{row["number-alias"]}</TableCell>
                 <TableCell>{row.name}</TableCell>
-                <TableCell>{row.effective_caller_id_name}</TableCell>
-                <TableCell>{row.effective_caller_id_number}</TableCell>
+                <TableCell>{row.toll_allow}</TableCell>
+                <TableCell>{row.ldap_ou}</TableCell>
+                <TableCell>{row.ldap_department}</TableCell>
+                <TableCell>{row.ldap_title}</TableCell>
+                <TableCell>{row.isdisable ? 'Да' : 'Нет'}</TableCell>
                 <TableCell>
                 <IconButton component={ReactLink} to={url+':'+row.id}>
                   <EditIcon fontSize="small"/>

@@ -20,6 +20,10 @@ const valuePOST = (isCreate, data) => {
     console.log("rangePage",rangePage)
     return PGApi.get('/'+TABLE+'?select=*,web_users(name)').order('regname', 'desc').match(param).range(rangePage.startItem, rangePage.endItem)
   }
+  const valueDELETE = (id) => {
+    console.log("valueDELETE",id)
+    return PGApi.delete('/'+TABLE).match({id: id})
+  }
   
   Api.addRoute('web_directory', { authRequired: true }, {
     get() {
@@ -38,6 +42,13 @@ const valuePOST = (isCreate, data) => {
       console.log('POST:' + TABLE +' param' + this.bodyParams)
       const { isCreate, id, data } = this.bodyParams;
       return SyncPromise(valuePOST(isCreate, data ))
+  
+    },
+    delete() {
+      console.log('DELETE:' + TABLE +' param' + this.queryParams)
+      const { id } = this.queryParams;
+      if (!id) return "error. not id"
+      return SyncPromise(valueDELETE(id))
   
     },
   });
