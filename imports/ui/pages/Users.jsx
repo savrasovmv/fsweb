@@ -470,7 +470,7 @@ export const Users = ({ isCreate = false }) => {
                                 </tr>
                                 <tr>
                                     <td>sAMAccountName</td>
-                                    <td><FormField name="sAMAccountName" errors={errors} register={register} /></td>
+                                    <td><FormField name="ldap_sAMAccountName" errors={errors} register={register} /></td>
                                 </tr>
                                 <tr>
                                     <td>Переадресация</td>
@@ -479,6 +479,10 @@ export const Users = ({ isCreate = false }) => {
                                 <tr>
                                     <td>transfer_number</td>
                                     <td><FormField name="transfer_number" errors={errors} register={register} /></td>
+                                </tr>
+                                <tr>
+                                    <td>Запись разговоров</td>
+                                    <td><input type="checkbox" ref={register} name="isrecord" id="isrecord" /></td>
                                 </tr>
 
                             </tbody>
