@@ -536,26 +536,7 @@ export const Users = ({ isCreate = false }) => {
                                         />
                                     </td>
                                 </tr>
-                                <tr>
-                                    <td>effective_caller_id_name</td>
-                                    <td>
-                                        <FormField
-                                            name="effective_caller_id_name"
-                                            errors={errors}
-                                            register={register}
-                                        />
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>effective_caller_id_number</td>
-                                    <td>
-                                        <FormField
-                                            name="effective_caller_id_number"
-                                            errors={errors}
-                                            register={register}
-                                        />
-                                    </td>
-                                </tr>
+
                                 <tr>
                                     <td>outbound_caller_id_name</td>
                                     <td>
@@ -684,26 +665,27 @@ export const Users = ({ isCreate = false }) => {
 
                 {direrctoryList ? (
                     <>
-                        <Box display="flex" justifyContent="flex-end">
-                            <ButtonGroup>
-                                <Button
-                                    variant="contained"
-                                    color="primary"
-                                    size="small"
-                                    startIcon={<AddIcon />}
-                                    component={ReactLink}
-                                    to={
-                                        '/web_users:' +
-                                        id +
-                                        '/web_directoryCreate' +
-                                        getValues('name')
-                                    }
-                                >
-                                    Добавить
-                                </Button>
-                            </ButtonGroup>
-                        </Box>
-
+                        {id ? (
+                            <Box display="flex" justifyContent="flex-end">
+                                <ButtonGroup>
+                                    <Button
+                                        variant="contained"
+                                        color="primary"
+                                        size="small"
+                                        startIcon={<AddIcon />}
+                                        component={ReactLink}
+                                        to={
+                                            '/web_users:' +
+                                            id +
+                                            '/web_directoryCreate' +
+                                            getValues('name')
+                                        }
+                                    >
+                                        Добавить
+                                    </Button>
+                                </ButtonGroup>
+                            </Box>
+                        ) : null}
                         <Table size="small">
                             <TableHead>
                                 <TableRow>

@@ -12,13 +12,13 @@ const ldapNamefield = configData.LDAP.namefield
 const ldap = require('ldapjs')
 const parseDN = require('ldapjs').parseDN
 
-// const client = ldap.createClient({
-//     url: [ldapHostname],
-// })
+const client = ldap.createClient({
+    url: [ldapHostname],
+})
 
-// client.on('error', (err) => {
-//     console.log('EEEEEEEEEEEEEEEEE')
-// })
+client.on('error', (err) => {
+    console.log('EEEEEEEEEEEEEEEEE')
+})
 
 // client.bind(ldapUser, ldapPassword, (err) => {
 //     console.log('2222222-----EEEEEEEEEEEEEEEEE')
@@ -62,9 +62,7 @@ const TABLE = 'ldap'
 //         return 'error'
 //     }
 // }
-const client = ldap.createClient({
-    url: [ldapHostname],
-})
+
 // function ldapGetOne(number = false) {
 //     if (number) {
 //         return new Promise((resolve, reject) => {
@@ -126,7 +124,7 @@ const client = ldap.createClient({
 // }
 
 async function test2() {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
         client.bind(ldapUser, ldapPassword, (err) => {
             if (err) {
                 console.log('2222222-----EEEEEEEEEEEEEEEEE')
@@ -166,6 +164,7 @@ async function test2() {
                     })
                     res.on('error', (err) => {
                         console.error('error: ' + err.message)
+                        reject(err.message)
                     })
                     res.on('end', (result) => {
                         console.log('status: ' + result.status)

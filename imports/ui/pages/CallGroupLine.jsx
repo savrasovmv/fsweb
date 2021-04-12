@@ -1,46 +1,42 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react'
 import { useForm, Controller } from 'react-hook-form'
-import ReactHTMLDatalist from "react-html-datalist";
-import ReactSelect from "react-select";
+import ReactHTMLDatalist from 'react-html-datalist'
+import ReactSelect from 'react-select'
 import { Link as ReactLink } from 'react-router-dom'
-import {
+import { useParams, useRouteMatch } from 'react-router-dom'
 
-    useParams,
-    useRouteMatch
-} from "react-router-dom";
+import history from '../../utils/history'
+import TextField from '@material-ui/core/TextField'
+import Alert from '@material-ui/lab/Alert'
+import { Title } from '../components/Title'
 
-import history from "../../utils/history";
-import TextField from '@material-ui/core/TextField';
-import Alert from '@material-ui/lab/Alert';
-import { Title } from '../components/Title';
+import Input from '@material-ui/core/Input'
+import InputLabel from '@material-ui/core/InputLabel'
 
-import Input from '@material-ui/core/Input';
-import InputLabel from '@material-ui/core/InputLabel';
-
-import Table from '@material-ui/core/Table';
-import Box from '@material-ui/core/Box';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import IconButton from '@material-ui/core/IconButton';
-import EditIcon from '@material-ui/icons/Edit';
-import AddIcon from '@material-ui/icons/Add';
-import DeleteIcon from '@material-ui/icons/Delete';
-import Dele from '@material-ui/icons/Delete';
-import Button from '@material-ui/core/Button';
-import Checkbox from '@material-ui/core/Checkbox';
-import MenuItem from '@material-ui/core/MenuItem';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Table from '@material-ui/core/Table'
+import Box from '@material-ui/core/Box'
+import TableBody from '@material-ui/core/TableBody'
+import TableCell from '@material-ui/core/TableCell'
+import TableHead from '@material-ui/core/TableHead'
+import TableRow from '@material-ui/core/TableRow'
+import IconButton from '@material-ui/core/IconButton'
+import EditIcon from '@material-ui/icons/Edit'
+import AddIcon from '@material-ui/icons/Add'
+import DeleteIcon from '@material-ui/icons/Delete'
+import Dele from '@material-ui/icons/Delete'
+import Button from '@material-ui/core/Button'
+import Checkbox from '@material-ui/core/Checkbox'
+import MenuItem from '@material-ui/core/MenuItem'
+import FormControlLabel from '@material-ui/core/FormControlLabel'
 
 import { APIClient } from '../../utils/RestApiClient'
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from "yup";
-import { ButtonGroup, FormControl, Select } from '@material-ui/core';
+import { yupResolver } from '@hookform/resolvers/yup'
+import * as yup from 'yup'
+import { ButtonGroup, FormControl, Select } from '@material-ui/core'
 
 const schema = yup.object().shape({
-    'number-alias':  yup.string().required().min(3, "Минимум 3 символа"),
-});
+    'number-alias': yup.string().required().min(3, 'Минимум 3 символа'),
+})
 
 const FormField = ({ name, errors, register }) => {
     return (
@@ -51,16 +47,19 @@ const FormField = ({ name, errors, register }) => {
                 id={name}
                 label={name}
                 name={name}
-
             />
-            {errors[name] && <font color="red">{errors[name].message}<br /></font>}
+            {errors[name] && (
+                <font color="red">
+                    {errors[name].message}
+                    <br />
+                </font>
+            )}
         </Box>
     )
 }
 
 const TABLE = 'web_callgroup_line'
 const LINE_TABLE = 'web_callgroup_line'
-
 
 //console.log("directoryTables", directoryTables)
 export const CallGroupLine = ({ isCreate = false }) => {
@@ -69,72 +68,68 @@ export const CallGroupLine = ({ isCreate = false }) => {
     const [searchUsers, setSearchUsers] = useState([])
     const [users, setUsers] = useState([])
 
-    const { register, errors, handleSubmit, setValue, control, getValues } = useForm(
-        {
-            mode: 'onBlur',
-            defaultValues: {},
-            resolver: yupResolver(schema),
-            shouldUnregister: false
-        }
-    )
-    let { path, url } = useRouteMatch();
-    let { id } = useParams();
+    const {
+        register,
+        errors,
+        handleSubmit,
+        setValue,
+        control,
+        getValues,
+    } = useForm({
+        mode: 'onBlur',
+        defaultValues: {},
+        resolver: yupResolver(schema),
+        shouldUnregister: false,
+    })
+    let { path, url } = useRouteMatch()
+    let { id } = useParams()
 
     useEffect(() => {
-        
         if (!isCreate) {
             cg = APIClient.v1.get(TABLE, { id: id })
             cg.then((resolve) => {
                 console.log('web_callgroup_line', resolve)
                 if (resolve.length > 0) {
-
                     for (const [key, value] of Object.entries(resolve[0])) {
                         setValue(key, value)
                     }
-                    filter = "number-alias=eq."+getValues('number-alias')
-                    us = APIClient.v1.get('web_users', {filter: filter })
+                    filter = 'number-alias=eq.' + getValues('number-alias')
+                    us = APIClient.v1.get('web_users', { filter: filter })
                     us.then((resolve) => {
-                            console.log('web_users', resolve)
-                            if (resolve.length > 0) {
-
-                                setUsers(resolve[0].name)
-                                
-                            }
-                        })
-                        .catch((error) => {
-                            console.log('Err = ', error)
-                        })
-                    
+                        console.log('web_users', resolve)
+                        if (resolve.length > 0) {
+                            setUsers(resolve[0].name)
+                        }
+                    }).catch((error) => {
+                        console.log('Err = ', error)
+                    })
                 }
+            }).catch((error) => {
+                console.log('Err = ', error)
             })
-                .catch((error) => {
-                    console.log('Err = ', error)
-                })
-            
+
             Promise.all([cg]).then(() => {
                 //console.log("values", values);
                 setOpen(true)
-            });
+            })
         } else {
-                setOpen(true)
+            setValue('callgroup_id', id)
+            setOpen(true)
         }
-
-
     }, [])
 
     const handleSubmitClick = (data) => {
-        console.log("data===", data)
+        console.log('data===', data)
 
-        APIClient.v1.post(TABLE, {}, { isCreate: isCreate, data: data })
+        APIClient.v1
+            .post(TABLE, {}, { isCreate: isCreate, data: data })
             .then((resolve) => {
                 console.log('result', resolve)
                 history.goBack()
-
             })
             .catch((error) => {
                 console.log('Err = ', error)
             })
-
     }
 
     // const handleDeleteLine = (line_id) => {
@@ -155,42 +150,38 @@ export const CallGroupLine = ({ isCreate = false }) => {
     //             //setCallGroupLineList(defaultDirectory)
     //         })
 
-            
     //     }
     // }
 
     const hendleSearch = (event) => {
         value = event.target.value
-        filter = "number-alias=eq."+value
-        us = APIClient.v1.get('web_users', {filter: filter })
-                    us.then((resolve) => {
-                            console.log('web_users filtering', resolve)
-                            if (resolve.length > 0) {
-
-                                setUsers(resolve[0].name)
-                                
-                            }
-                        })
-                        .catch((error) => {
-                            console.log('Err = ', error)
-                        })
-
-
+        filter = 'number-alias=eq.' + value
+        us = APIClient.v1.get('web_users', { filter: filter })
+        us.then((resolve) => {
+            console.log('web_users filtering', resolve)
+            if (resolve.length > 0) {
+                setUsers(resolve[0].name)
+            }
+        }).catch((error) => {
+            console.log('Err = ', error)
+        })
     }
     // const handleClick = (value) => {
     //    // value = event.target.value
     //     alert(value)
 
-
     // }
-   
 
     return (
         <React.Fragment>
             <Title>Участник группы</Title>
-            <form noValidate autoComplete="off" onSubmit={handleSubmit(handleSubmitClick)}>
+            <form
+                noValidate
+                autoComplete="off"
+                onSubmit={handleSubmit(handleSubmitClick)}
+            >
                 {open ? (
-                    <Box >
+                    <Box>
                         <Box display="flex" justifyContent="flex-end">
                             <ButtonGroup>
                                 <Button
@@ -207,7 +198,6 @@ export const CallGroupLine = ({ isCreate = false }) => {
                                     color="secondary"
                                     onClick={() => history.goBack()}
                                 >
-
                                     Отмена
                                 </Button>
                             </ButtonGroup>
@@ -215,8 +205,7 @@ export const CallGroupLine = ({ isCreate = false }) => {
 
                         <table>
                             <tbody>
-                                
-                                 {/* <tr>
+                                {/* <tr>
                                     <td>Пользователь</td>
                                     <td>
                                         <select ref={register} name="users_id" id="users_id" placeholder="Pick a state..." >
@@ -232,27 +221,30 @@ export const CallGroupLine = ({ isCreate = false }) => {
                                 <tr>
                                     <td>Номер</td>
                                     <td>
-                                        <input type="text" ref={register} name="number-alias" id="number-alias" onBlur={hendleSearch}/>
-                                        {errors[name] && <font color="red">{errors[name].message}<br /></font>}                                
-                                    </td>
-                                </tr> 
-                                <tr>
-                                    <td>Пользователь</td>
-                                    <td>
-                                        {users}
-                                                                           
+                                        <input
+                                            type="text"
+                                            ref={register}
+                                            name="number-alias"
+                                            id="number-alias"
+                                            onBlur={hendleSearch}
+                                        />
+                                        {errors[name] && (
+                                            <font color="red">
+                                                {errors[name].message}
+                                                <br />
+                                            </font>
+                                        )}
                                     </td>
                                 </tr>
-                                
-                                
+                                <tr>
+                                    <td>Пользователь</td>
+                                    <td>{users}</td>
+                                </tr>
                             </tbody>
                         </table>
-                       
                     </Box>
                 ) : null}
             </form>
-            
-
         </React.Fragment>
-    );
+    )
 }
