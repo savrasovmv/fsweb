@@ -27,3 +27,9 @@ default.json
 // "usernamefield": "sAMAccountName", //атрибут,используемый как имя пользователя
 // "namefield": "cn" //атрибут, используемый как отображемое имя
 // }
+
+Раздел конфигурации конференций
+Profile - ввести наименования профалов через запятую, без пробелов
+"Conference": {
+"Profile": "default,wideband,ultrawideband,cdquality,sla"
+}

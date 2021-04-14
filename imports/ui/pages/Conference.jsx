@@ -32,6 +32,9 @@ import { APIClient } from '../../utils/RestApiClient'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 import { ButtonGroup, FormControl, Select } from '@material-ui/core'
+import configData from '../../../config/default.json'
+
+const profileList = configData.Conference.Profile
 
 const schema = yup.object().shape({
     name: yup.string().required().min(3, 'Минимум 3 символа'),
@@ -59,12 +62,11 @@ const FormField = ({ name, errors, register }) => {
 }
 
 const TABLE = 'web_conference'
-const LINE_TABLE = 'web_conference_line'
 
 //console.log("directoryTables", directoryTables)
 export const Conference = ({ isCreate = false }) => {
-    const [conferenceLineList, setConferenceLineList] = React.useState([])
     const [open, setOpen] = useState(false)
+    const [profileRow, setProfileRow] = useState(profileList.split(','))
 
     const {
         register,
@@ -91,16 +93,6 @@ export const Conference = ({ isCreate = false }) => {
                     for (const [key, value] of Object.entries(resolve[0])) {
                         setValue(key, value)
                     }
-                    APIClient.v1
-                        .get(LINE_TABLE, { conference_id: id })
-                        .then((resolve) => {
-                            console.log('LINE_TABLE', resolve)
-                            setConferenceLineList(resolve)
-                        })
-                        .catch((error) => {
-                            console.log('Err = ', error)
-                            setConferenceLineList([])
-                        })
                 }
             }).catch((error) => {
                 console.log('Err = ', error)
@@ -127,25 +119,6 @@ export const Conference = ({ isCreate = false }) => {
             .catch((error) => {
                 console.log('Err = ', error)
             })
-    }
-
-    const handleDeleteLine = (line_id) => {
-        console.log('DELETE', line_id)
-        result = confirm('Вы действительно хотите удалить запись?')
-        if (result) {
-            APIClient.v1
-                .delete(LINE_TABLE, { id: line_id })
-                .then((resolve) => {
-                    console.log('result', resolve)
-                    //setDirectory(resolve.result[0])
-                    console.log('Запись удалена')
-                    history.go(0)
-                })
-                .catch((error) => {
-                    console.log('Err = ', error)
-                    //setConferenceLineList(defaultDirectory)
-                })
-        }
     }
 
     return (
@@ -181,19 +154,6 @@ export const Conference = ({ isCreate = false }) => {
 
                         <table>
                             <tbody>
-                                {/* <tr>
-                                    <td>Контекст</td>
-                                    <td>
-                                        <select ref={register} name="context_id" id="context_id" >
-                                            {context.map((option) => (
-                                                <option key={option.id} value={option.id}>
-                                                    {option.name}
-                                                </option>
-                                            ))}
-                                        </select>
-
-                                    </td> 
-                                </tr>*/}
                                 <tr>
                                     <td>Наименование</td>
                                     <td>
@@ -213,6 +173,31 @@ export const Conference = ({ isCreate = false }) => {
                                             register={register}
                                         />
                                     </td>
+                                </tr>
+                                <tr>
+                                    <td>profile</td>
+                                    <td>
+                                        <select
+                                            ref={register}
+                                            name="profile"
+                                            id="profile"
+                                        >
+                                            {profileRow.map((option) => (
+                                                <option
+                                                    key={option}
+                                                    value={option}
+                                                >
+                                                    {option}
+                                                </option>
+                                            ))}
+                                        </select>
+                                        {/* <FormField
+                                            name="profile"
+                                            errors={errors}
+                                            register={register}
+                                        /> */}
+                                    </td>
+                                    <td>Доступные значения</td>
                                 </tr>
                                 <tr>
                                     <td>Использовать пароль</td>
@@ -235,28 +220,7 @@ export const Conference = ({ isCreate = false }) => {
                                         />
                                     </td>
                                 </tr>
-                                <tr>
-                                    <td>Разрешено только участникам</td>
-                                    <td>
-                                        <input
-                                            type="checkbox"
-                                            ref={register}
-                                            name="ismembers"
-                                            id="ismembers"
-                                        />
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Вызывать участников</td>
-                                    <td>
-                                        <input
-                                            type="checkbox"
-                                            ref={register}
-                                            name="iscallmembers"
-                                            id="iscallmembers"
-                                        />
-                                    </td>
-                                </tr>
+
                                 <tr>
                                     <td>Запись разговоров</td>
                                     <td>
@@ -273,75 +237,6 @@ export const Conference = ({ isCreate = false }) => {
                     </Box>
                 ) : null}
             </form>
-            <Box mt={3}>
-                <Title>Список участников</Title>
-
-                {conferenceLineList ? (
-                    <>
-                        {id ? (
-                            <Box display="flex" justifyContent="flex-end">
-                                <ButtonGroup>
-                                    <Button
-                                        variant="contained"
-                                        color="primary"
-                                        size="small"
-                                        startIcon={<AddIcon />}
-                                        component={ReactLink}
-                                        to={
-                                            '/web_conference:' +
-                                            id +
-                                            '/web_conferenceLineCreate'
-                                        }
-                                    >
-                                        Добавить
-                                    </Button>
-                                </ButtonGroup>
-                            </Box>
-                        ) : null}
-                        <Table size="small">
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell>id</TableCell>
-                                    <TableCell>Номер пользователя</TableCell>
-                                    <TableCell>Редак.</TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {conferenceLineList.map((row) => (
-                                    <TableRow key={row.id}>
-                                        <TableCell>{row.id}</TableCell>
-                                        <TableCell>
-                                            {row['number-alias']}
-                                        </TableCell>
-                                        <TableCell>
-                                            <IconButton
-                                                component={ReactLink}
-                                                to={
-                                                    '/web_conference_line:' +
-                                                    row.id
-                                                }
-                                            >
-                                                <EditIcon />
-                                            </IconButton>
-                                        </TableCell>
-                                        <TableCell>
-                                            <IconButton
-                                                onClick={() =>
-                                                    handleDeleteLine(row.id)
-                                                }
-                                            >
-                                                <DeleteIcon />
-                                            </IconButton>
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </>
-                ) : (
-                    'Нет данных'
-                )}
-            </Box>
         </React.Fragment>
     )
 }

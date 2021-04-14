@@ -12,5 +12,8 @@
         "basedn": "ou=UsersCorporate,dc=tmenergo,dc=ru",
         "usernamefield": "sAMAccountName",
         "namefield": "cn"
+    },
+    "Conference": {
+        "Profile": "default,wideband,ultrawideband,cdquality,sla"
     }
 }

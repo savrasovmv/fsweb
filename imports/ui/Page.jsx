@@ -37,7 +37,6 @@ import { CallGroupLine } from './pages/CallGroupLine'
 import { CallGroup } from './pages/CallGroup'
 import { ConferenceList } from './pages/ConferenceList'
 import { Conference } from './pages/Conference'
-import { ConferenceLine } from './pages/ConferenceLine'
 import { Users } from './pages/Users'
 import { UsersList } from './pages/UsersList'
 import { Settings } from './pages/Settings'
@@ -148,15 +147,6 @@ export const Page = () => {
                             <CallGroupList />
                         </Route>
 
-                        <Route path="/web_conference_line::id">
-                            <ConferenceLine />
-                        </Route>
-                        <Route path="/web_conference::id/web_conferencelineCreate">
-                            <ConferenceLine
-                                isCreate={true}
-                                redirect="/web_conference"
-                            />
-                        </Route>
                         <Route path="/web_conferenceCreate">
                             <Conference isCreate={true} />
                         </Route>
