@@ -10,10 +10,13 @@ default.json
 "LDAP": {
 "hostname": "http://127.0.0.1:3030",
 "user": "cn=LDAP,cn=Users,dc=xxxx,dc=xxx",
-"password": "TfFn7MpasswordfTlL",
+"password": "password",
 "basedn": "ou=Users,dc=xxxx,dc=xxx",
 "usernamefield": "sAMAccountName",
 "namefield": "cn"
+},
+"Conference": {
+"Profile": "default,wideband,ultrawideband,cdquality,sla"
 }
 }
 
