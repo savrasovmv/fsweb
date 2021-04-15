@@ -206,6 +206,80 @@ export const CallGroup = ({ isCreate = false }) => {
                     </Box>
                 ) : null}
             </form>
+            <Box mt={3}>
+                <Title>Список участников</Title>
+
+                {callGroupLineList ? (
+                    <>
+                        {id ? (
+                            <Box display="flex" justifyContent="flex-end">
+                                <ButtonGroup>
+                                    <Button
+                                        variant="contained"
+                                        color="primary"
+                                        size="small"
+                                        startIcon={<AddIcon />}
+                                        component={ReactLink}
+                                        to={
+                                            '/web_callgroup:' +
+                                            id +
+                                            '/web_callgrouplineCreate' +
+                                            getValues('name')
+                                        }
+                                    >
+                                        Добавить
+                                    </Button>
+                                </ButtonGroup>
+                            </Box>
+                        ) : null}
+                        <Table size="small">
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>id</TableCell>
+                                    <TableCell>Номер</TableCell>
+                                    <TableCell>Редак.</TableCell>
+                                    <TableCell>Удалить</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {callGroupLineList.map((row) => (
+                                    <TableRow key={row.id}>
+                                        <TableCell>{row.id}</TableCell>
+                                        <TableCell>
+                                            {row['number-alias']}
+                                        </TableCell>
+
+                                        <TableCell>
+                                            <IconButton
+                                                component={ReactLink}
+                                                to={
+                                                    '/' +
+                                                    LINE_TABLE +
+                                                    ':' +
+                                                    row.id
+                                                }
+                                            >
+                                                <EditIcon />
+                                            </IconButton>
+                                        </TableCell>
+                                        <TableCell>
+                                            <IconButton
+                                                onClick={() =>
+                                                    handleDeleteLine(row.id)
+                                                }
+                                            >
+                                                <DeleteIcon />
+                                            </IconButton>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </>
+                ) : (
+                    'Нет данных'
+                )}
+            </Box>
         </React.Fragment>
     )
 }
