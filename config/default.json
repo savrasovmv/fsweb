@@ -6,10 +6,10 @@
         "url": "http://127.0.0.1:3030"
     },
     "LDAP": {
-        "hostname": "ldap://10.100.100.5:389",
-        "user": "cn=LDAP,cn=Users,dc=tmenergo,dc=ru",
-        "password": "TfFn7MfTlL",
-        "basedn": "ou=UsersCorporate,dc=tmenergo,dc=ru",
+        "hostname": "ldap://10.10.10.10:389",
+        "user": "cn=LDAP,cn=Users,dc=xxxx,dc=xxx",
+        "password": "password",
+        "basedn": "ou=Users,dc=xxxx,dc=xxx",
         "usernamefield": "sAMAccountName",
         "namefield": "cn"
     },
