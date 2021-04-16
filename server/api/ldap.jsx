@@ -123,8 +123,11 @@ const TABLE = 'ldap'
 //     }
 // }
 
-async function test2() {
+async function searchEmpl(number = false) {
     return new Promise((resolve, reject) => {
+        if (number == false) {
+            reject('Не указан номер')
+        }
         client.bind(ldapUser, ldapPassword, (err) => {
             if (err) {
                 console.log('2222222-----EEEEEEEEEEEEEEEEE')
@@ -132,7 +135,9 @@ async function test2() {
             } else {
                 const opts = {
                     filter:
-                        '(&(objectCategory=user)(objectClass=user)(ipPhone=110))',
+                        '(&(objectCategory=user)(objectClass=user)(ipPhone=' +
+                        number +
+                        '))',
                     scope: 'sub',
                     attributes: [
                         'cn',
@@ -197,7 +202,7 @@ Api.addRoute(
             //   param = {id: id}
             // }
 
-            return SyncPromise(test2())
+            return SyncPromise(searchEmpl(number))
         },
         // post() {
         //   console.log('POST:' + TABLE +' param' + this.bodyParams)

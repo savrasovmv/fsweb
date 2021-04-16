@@ -197,7 +197,12 @@ export const Conference = ({ isCreate = false }) => {
                                             register={register}
                                         /> */}
                                     </td>
-                                    <td>Доступные значения</td>
+                                    <td>
+                                        <em>
+                                            Профиль с -rec означает запись
+                                            конференции
+                                        </em>
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td>Использовать пароль</td>
@@ -217,18 +222,6 @@ export const Conference = ({ isCreate = false }) => {
                                             name="password"
                                             errors={errors}
                                             register={register}
-                                        />
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <td>Запись разговоров</td>
-                                    <td>
-                                        <input
-                                            type="checkbox"
-                                            ref={register}
-                                            name="isrecord"
-                                            id="isrecord"
                                         />
                                     </td>
                                 </tr>

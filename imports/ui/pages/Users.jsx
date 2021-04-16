@@ -48,7 +48,7 @@ const schema = yup.object().shape({
     domain_id: yup.number().required().positive().integer(),
     name: yup.string().required().min(3, 'Минимум 3 символа'),
     mailbox: yup.string(),
-    'number-alias': yup.string(),
+    'number-alias': yup.string().required().min(2, 'Минимум 2 символа'),
     toll_allow: yup.string(),
     context_id: yup.number().required().positive().integer(),
     default_gateway: yup.string(),
@@ -305,8 +305,13 @@ export const Users = ({ isCreate = false }) => {
 
     const hendleUpdateLDAP = () => {
         console.log('hendleUpdateLDAP')
+        const number = getValues('number-alias')
+        if (number === '') {
+            alert('Номер не может быть пустым')
+            return
+        }
         APIClient.v1
-            .get('/ldap', { number: '110' })
+            .get('/ldap', { number: number })
             .then((resolve) => {
                 console.log('result', resolve)
                 console.log('result typeof', typeof resolve)

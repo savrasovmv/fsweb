@@ -1,4 +1,16 @@
 body {
-  padding: 10px;
-  font-family: sans-serif;
+    padding: 10px;
+    font-family: sans-serif;
+}
+
+input,
+select {
+    margin: 2px;
+}
+
+input[type='text'] {
+    width: 300px;
+    border: 1px solid gray;
+    border-radius: 2px;
+    padding: 3px 5px;
 }

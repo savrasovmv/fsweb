@@ -201,6 +201,17 @@ export const CallGroup = ({ isCreate = false }) => {
                                         />
                                     </td>
                                 </tr>
+                                <tr>
+                                    <td>Запись разговоров</td>
+                                    <td>
+                                        <input
+                                            type="checkbox"
+                                            ref={register}
+                                            name="isrecord"
+                                            id="isrecord"
+                                        />
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                     </Box>
